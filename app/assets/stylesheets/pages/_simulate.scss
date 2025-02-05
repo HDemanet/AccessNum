@@ -1,0 +1,23 @@
+.custom-placeholder::placeholder {
+  color: $light-blue;
+}
+
+.custom-btn {
+  background-color: $blue;
+  color: white;
+  font-weight: bold;
+  padding: 10px 20px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease-in-out, transform 0.2s;
+  border: none;
+
+  &:hover, &:focus {
+    background-color: $light-blue;
+    transform: scale(1.05);
+  }
+
+  &:focus {
+    outline: 2px solid $orange;
+    outline-offset: 2px;
+  }
+}

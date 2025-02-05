@@ -1,0 +1,30 @@
+<div data-controller="simulate">
+  <% if params[:url].present? %>
+    <!-- Si l'URL est présente, afficher l'iframe et les boutons de simulation -->
+    <h2 data-simulate-target="title" class="mt-4">Sélectionnez une simulation</h2>
+    <p data-simulate-target="description" class="text-muted">Cliquez sur un bouton pour voir les effets.</p>
+
+    <!-- Iframe with the website content -->
+    <iframe data-simulate-target="iframe" id="preview" class="w-100 border rounded" src="<%= params[:url] %>" title="Aperçu du site testé"></iframe>
+
+    <!-- Buttons for each simulation type -->
+    <div class="d-flex justify-content-center mt-4">
+      <button data-action="click->simulate#toggle" data-type="daltonisme" class="btn btn-outline-primary m-2">Daltonisme</button>
+      <button data-action="click->simulate#toggle" data-type="dmla" class="btn btn-outline-primary m-2">DMLA</button>
+      <button data-action="click->simulate#toggle" data-type="cataracte" class="btn btn-outline-primary m-2">Cataracte</button>
+      <button data-action="click->simulate#toggle" data-type="cecité" class="btn btn-outline-primary m-2">Cécité</button>
+      <button data-action="click->simulate#toggle" data-type="moteur" class="btn btn-outline-primary m-2">Handicap moteur</button>
+      <button data-action="click->simulate#toggle" data-type="cognitif" class="btn btn-outline-primary m-2">Handicap cognitif</button>
+    </div>
+
+  <% else %>
+    <!-- Si l'URL n'est pas présente, afficher le formulaire pour entrer l'URL -->
+    <h2 class="mt-4">Pour vous glisser dans la peau de différents utilisateurs, veuillez entrer l'URL d'un site.</h2>
+    <%= form_tag simulate_path, method: :get, class: "mt-4" do %>
+      <div class="input-group">
+        <%= text_field_tag :url, params[:url], class: "form-control custom-placeholder", placeholder: "Entrez l'URL du site à analyser" %>
+        <button class="btn custom-btn" type="submit">Simuler</button>
+      </div>
+    <% end %>
+  <% end %>
+</div>
