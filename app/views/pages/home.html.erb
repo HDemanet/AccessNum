@@ -4,12 +4,12 @@
       <h1 class="display-4 fw-bold">AccessNum, à vous de voir</h1>
       <p class="lead">
         Découvrez comment un site est perçu par différents utilisateurs.<br>
-        En saisissant une URL, vous pourrez simuler diverses situations et comprendre l'importance d'un web accessible à tous.
+        En saisissant une URL, vous pourrez simuler diverses situations et comprendre l'importance d'avoir des sites web accessibles à tous !
       </p>
 
       <%= form_tag simulate_path, method: :get, class: "mt-4" do %>
         <div class="input-group">
-          <%= text_field_tag :url, params[:url], class: "form-control custom-placeholder", placeholder: "Entrez l'URL du site à analyser" %>
+          <%= text_field_tag :url, params[:url], class: "form-control custom-placeholder", placeholder: "Entrez l'URL d'un site web" %>
           <button class="btn custom-btn" type="submit">Simuler</button>
         </div>
       <% end %>

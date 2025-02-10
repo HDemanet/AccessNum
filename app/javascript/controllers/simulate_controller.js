@@ -5,83 +5,82 @@ export default class extends Controller {
 
   connect() {
     console.log("Simulate Controller connected!");
-    this.activeFilters = {}; // Stores active filters
+    this.activeFilter = null;
+    document.getElementById("url-form").addEventListener("submit", this.updateURL.bind(this));
   }
 
   toggle(event) {
     const type = event.currentTarget.dataset.type;
     const iframe = this.iframeTarget;
 
-    if (this.activeFilters[type]) {
-      this.removeFilter(type, iframe);
-    } else {
-      this.applyFilter(type, iframe);
+    if (this.activeFilter === type) {
+      this.resetFilter(iframe);
+      return;
     }
+
+    this.applyFilter(type, iframe);
   }
 
-  // Applies the selected filter
   applyFilter(type, iframe) {
-    // Reset other filters
-    this.activeFilters = {};
-    this.activeFilters[type] = true;
+    this.resetFilter(iframe);
+    this.activeFilter = type;
 
     switch (type) {
       case "daltonisme":
-        iframe.style.filter = "url(#daltonisme)"; // Custom filter for red/green confusion
-        this.updateInfo("Daltonisme", "Simule la confusion des couleurs, principalement du vert et du rouge.");
+        iframe.style.filter = "grayscale(100%) contrast(90%)";
+        this.updateInfo("Daltonisme", "Le daltonisme altère la perception des couleurs.");
         break;
-
       case "dmla":
-        iframe.style.filter = "blur(5px)"; // Simulate DMLA with blurred vision
-        this.updateInfo("DMLA", "Simule la dégénérescence maculaire liée à l'âge.");
+        iframe.style.filter = "blur(8px)";
+        this.updateInfo("DMLA", "Vision floue, notamment au centre du champ de vision.");
         break;
-
       case "cataracte":
-        iframe.style.filter = "brightness(50%) contrast(150%)"; // Simulate cataracts
-        this.updateInfo("Cataracte", "Simule la vision trouble due à une cataracte.");
+        iframe.style.filter = "brightness(50%) contrast(150%)";
+        this.updateInfo("Cataracte", "Vision trouble et sensibilité accrue à la lumière.");
         break;
-
       case "cecité":
-        iframe.style.visibility = "hidden"; // Simulate blindness (completely hide)
-        this.updateInfo("Cécité", "Simule la cécité totale. Le site est invisible.");
+        iframe.style.visibility = "hidden";
+        this.updateInfo("Cécité", "Une personne aveugle utilise un lecteur d'écran.");
         this.playScreenReader();
         break;
-
       case "moteur":
-        iframe.style.pointerEvents = "none"; // Disable mouse pointer
-        this.updateInfo("Handicap moteur", "Simule l'incapacité d'utiliser la souris. Utilisez uniquement la touche TAB.");
+        iframe.style.pointerEvents = "none";
+        this.updateInfo("Handicap moteur", "Difficultés à utiliser une souris, usage du clavier privilégié.");
         break;
-
       case "cognitif":
-        iframe.style.filter = "saturate(150%)"; // Simulate dyslexia by distorting text
-        this.updateInfo("Handicap cognitif", "Simule la dyslexie en déformant légèrement le texte.");
+        iframe.style.filter = "saturate(150%)";
+        this.updateInfo("Handicap cognitif", "Difficultés à traiter l’information, mise en page claire recommandée.");
         break;
-
       default:
         break;
     }
   }
 
-  // Remove selected filter
-  removeFilter(type, iframe) {
-    this.activeFilters[type] = false;
+  resetFilter(iframe) {
+    this.activeFilter = null;
     iframe.style.filter = "";
     iframe.style.visibility = "visible";
-    iframe.style.pointerEvents = "auto"; // Re-enable pointer events
+    iframe.style.pointerEvents = "auto";
     this.updateInfo("Sélectionnez une simulation", "Cliquez sur un bouton pour voir les effets.");
   }
 
-  // Update the title and description dynamically
   updateInfo(title, description) {
     this.titleTarget.innerText = title;
     this.descriptionTarget.innerText = description;
   }
 
-  // Simulate what a screen reader would say (using an example of text-to-speech)
   playScreenReader() {
     const textToRead = "Cette page est maintenant simulée pour une personne aveugle.";
     let speech = new SpeechSynthesisUtterance(textToRead);
     speech.lang = "fr-FR";
     window.speechSynthesis.speak(speech);
+  }
+
+  updateURL(event) {
+    event.preventDefault();
+    const newURL = document.getElementById("site-url").value;
+    if (newURL) {
+      window.location.href = `?url=${encodeURIComponent(newURL)}`;
+    }
   }
 }
