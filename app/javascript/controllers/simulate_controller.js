@@ -1,22 +1,19 @@
-// simulate_controller.js
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
   static targets = ["iframe", "title", "description", "overlayContainer", "cursor", "recommendations"];
 
   static values = {
-    currentDaltonismIndex: { type: Number, default: 0 }
+    currentDaltonismIndex: { type: Number, default: 0 },
+    isReading: { type: Boolean, default: false }
   }
 
   connect() {
     this.activeFilter = null;
     this.setupKeyboardNavigation();
     this.setupCursorTracking();
-
-    const screenReaderButton = document.getElementById('screen-reader-toggle');
-    if (screenReaderButton) {
-      screenReaderButton.addEventListener('click', () => this.startScreenReader());
-    }
+    this.audioContext = null;
+    this.gainNode = null;
   }
 
   setupKeyboardNavigation() {
@@ -172,12 +169,43 @@ export default class extends Controller {
     iframe.style.position = "relative"; // Assurer que l'iframe est en position relative pour positionner l'overlay dessus
     iframe.parentElement.appendChild(overlay); // Ajouter l'overlay au parent de l'iframe
 
-    const screenReaderButton = document.getElementById('screen-reader-toggle');
-    if (screenReaderButton) {
-      screenReaderButton.classList.remove('d-none');
+    // Vérifie si le bouton existe déjà, sinon le crée
+    let screenReaderButton = document.getElementById('play-screen-reader');
+    if (!screenReaderButton) {
+        screenReaderButton = document.createElement('button');
+        screenReaderButton.id = 'play-screen-reader';
+        screenReaderButton.className = 'btn btn-primary';
+        screenReaderButton.innerHTML = '<i class="fas fa-play"></i> Démarrer le lecteur d\'écran';
+        screenReaderButton.style.position = 'absolute';
+        screenReaderButton.style.top = '50%';
+        screenReaderButton.style.left = '50%';
+        screenReaderButton.style.transform = 'translate(-50%, -50%)'; // Centrer le bouton
+        screenReaderButton.style.zIndex = "10000";  // Assurer qu'il est au-dessus de l'overlay
+        overlay.appendChild(screenReaderButton); // Ajouter le bouton à l'overlay
     }
 
-    // this.startScreenReader();
+    // Ajouter l'événement pour démarrer le lecteur d'écran
+    screenReaderButton.addEventListener('click', () => {
+      if (window.speechSynthesis.speaking) {
+          // Si la lecture est en cours, on met en pause
+          window.speechSynthesis.pause();
+          screenReaderButton.innerHTML = '<i class="fas fa-play"></i> Reprendre la lecture';
+          screenReaderButton.classList.remove('btn-secondary');
+          screenReaderButton.classList.add('btn-primary');
+      } else if (window.speechSynthesis.paused) {
+          // Si la lecture est en pause, on reprend
+          window.speechSynthesis.resume();
+          screenReaderButton.innerHTML = '<i class="fas fa-pause"></i> Pause';
+          screenReaderButton.classList.add('btn-secondary');
+          screenReaderButton.classList.remove('btn-primary');
+      } else {
+          // Si la lecture n'a pas encore commencé, on la lance
+          this.startScreenReader();
+          screenReaderButton.innerHTML = '<i class="fas fa-pause"></i> Pause';
+          screenReaderButton.classList.add('btn-secondary');
+          screenReaderButton.classList.remove('btn-primary');
+      }
+    });
 
     this.updateInfo(
       "Cécité",
@@ -199,17 +227,33 @@ export default class extends Controller {
   }
 
   simulateSurdite(iframe) {
-    iframe.style.opacity = "0.1";
-    this.startScreenReader();
+    if (!this.audioContext) {
+      this.audioContext = new (window.AudioContext)();
+      this.gainNode = this.audioContext.createGain();
+      this.gainNode.connect(this.audioContext.destination);
+    }
+    this.gainNode.gain.value = 0.1; // Réduire le volume
+    const captionsOverlay = document.createElement('div');
+    captionsOverlay.id = 'captions-overlay';
+    captionsOverlay.className = 'position-absolute bottom-0 w-100 text-center p-3 bg-dark text-white';
+    captionsOverlay.style.zIndex = "9999";
+    captionsOverlay.innerHTML = `
+      <div class="captions-container">
+        <p class="mb-0">⚠️ Les contenus audio de cette page ne sont pas accessibles sans sous-titres.</p>
+        <small>Les personnes sourdes ou malentendantes ont besoin de sous-titres et de transcriptions.</small>
+      </div>
+    `;
+
+    iframe.parentElement.appendChild(captionsOverlay);
 
     this.updateInfo(
       "Surdité",
-      "Les personnes aveugles utilisent des lecteurs d'écran pour naviguer sur le web.",
+      "Les personnes sourdes ou malentendantes ne peuvent pas accéder aux contenus audio sans alternatives textuelles.",
       [
-        "Fournir des alternatives textuelles pour les images (WCAG 2.1 - 1.1.1)",
-        "Structurer le contenu avec des balises sémantiques",
-        "Assurer une navigation complète au clavier",
-        "Décrire les contenus complexes (graphiques, tableaux)"
+        "Fournir des sous-titres pour tous les contenus audio (WCAG 2.1 - 1.2.2)",
+        "Proposer des transcriptions textuelles",
+        "Éviter les contenus qui ne fonctionnent qu'avec du son",
+        "Permettre le contrôle du volume et la désactivation du son"
       ]
     );
   }
@@ -251,12 +295,44 @@ export default class extends Controller {
   }
 
   startScreenReader() {
-    // Simule un lecteur d'écran basique
-    const textToRead = "Simulation du lecteur d'écran activée. Une personne aveugle utiliserait un véritable lecteur d'écran comme NVDA ou JAWS pour parcourir cette page.";
+    if (window.speechSynthesis.speaking) {
+        // Si la lecture est déjà en cours, ne rien faire
+        return;
+    }
 
+    const textToRead = "Simulation du lecteur d'écran activée. Une personne aveugle utiliserait un véritable lecteur d'écran comme NVDA ou JAWS pour parcourir cette page.";
     const utterance = new SpeechSynthesisUtterance(textToRead);
     utterance.lang = 'fr-FR';
+
     window.speechSynthesis.speak(utterance);
+  }
+
+  setupScreenReaderControls() {
+    const playButton = document.getElementById('play-screen-reader');
+    const pauseButton = document.getElementById('pause-screen-reader');
+    const stopButton = document.getElementById('stop-screen-reader');
+
+    playButton?.addEventListener('click', () => {
+      this.startScreenReader();
+      playButton.classList.add('d-none');
+      pauseButton.classList.remove('d-none');
+      stopButton.classList.remove('d-none');
+    });
+
+    pauseButton?.addEventListener('click', () => {
+      window.speechSynthesis.pause();
+      playButton.textContent = 'Reprendre';
+      playButton.classList.remove('d-none');
+      pauseButton.classList.add('d-none');
+    });
+
+    stopButton?.addEventListener('click', () => {
+      window.speechSynthesis.cancel();
+      playButton.textContent = 'Démarrer le lecteur d\'écran';
+      playButton.classList.remove('d-none');
+      pauseButton.classList.add('d-none');
+      stopButton.classList.add('d-none');
+    });
   }
 
   resetFilter() {
@@ -274,9 +350,20 @@ export default class extends Controller {
 
     // Nettoie les overlays
     container.querySelectorAll('.simulation-overlay').forEach(el => el.remove());
-
-    // Appel de la méthode pour supprimer l'overlay de la cécité
     this.removeCeciteOverlay();
+
+    // Supprimer les contrôles du lecteur d'écran
+    const screenReaderControls = document.getElementById('screen-reader-controls');
+    screenReaderControls?.remove();
+
+    // Supprimer l'overlay des sous-titres
+    const captionsOverlay = document.getElementById('captions-overlay');
+    captionsOverlay?.remove();
+
+    // Réinitialiser l'audio
+    if (this.audioContext) {
+      this.gainNode.gain.value = 1;
+    }
 
     // Réinitialise le curseur
     cursor.classList.add('d-none');
