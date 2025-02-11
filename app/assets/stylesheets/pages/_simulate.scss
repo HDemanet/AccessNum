@@ -1,25 +1,95 @@
+// Variables
+$transition-duration: 0.3s;
+$overlay-z-index: 1000;
+
+// Base styles
 #preview {
-  height: 500px;
+  height: 600px;
+  width: 100%;
+  transition: all $transition-duration ease-in-out;
+}
+
+.overlay-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+// Boutons - Amélioration de l'accessibilité et de l'esthétique
+.btn-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+  justify-content: center;
+  --bs-border-radius: 5px;
 }
 
 .btn-group .btn {
-  flex: 1 1 30%;
   font-weight: bold;
+  padding: 12px;
+  text-align: center;
+  transition: all $transition-duration ease-in-out;
+  background-color: white;
+  border: 2px solid $blue;
+  color: $blue;
 }
 
-.bg-light {
-  background-color: #f8f9fa;
+.btn-group .btn[aria-pressed="true"] {
+  background-color: $blue;
+  color: white;
+  transform: scale(1.05);
+}
+
+.btn-group .btn:focus,
+.btn-group .btn:hover {
+  background-color: $blue;
+  color: white;
+  outline: 3px solid $orange;
+  outline-offset: 2px;
+  border-radius: 5px;
+}
+
+// Alignement de l'iframe et de la description
+.row.mt-4 {
+  display: flex;
+  align-items: stretch;
+}
+
+.col-md-7, .col-md-5 {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.col-md-5 > .border {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.recommendations {
+  margin-top: auto;
+}
+
+// Formulaire
+.input-group > :not(:first-child):not(.dropdown-menu):not(.valid-tooltip):not(.valid-feedback):not(.invalid-tooltip):not(.invalid-feedback) {
+  border-radius: 5px;
+}
+
+.input-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
 }
 
 .form-control {
+  flex: 1;
   border: 1.5px solid $blue;
   border-radius: 5px;
-  padding: 10px;
-  color: $light-blue;
-}
-
-.custom-placeholder::placeholder {
-  color: $light-blue;
+  padding: 9px;
+  color: $blue;
 }
 
 .custom-btn {
@@ -34,10 +104,92 @@
   &:hover, &:focus {
     background-color: $light-blue;
     transform: scale(1.05);
-  }
-
-  &:focus {
-    outline: 2px solid $orange;
+    outline: 3px solid $pink;
     outline-offset: 2px;
   }
+}
+
+.text-x {
+  font-size: 0.9rem;
+  color: $pink !important;
+}
+
+// Simulations
+.simulation-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: $overlay-z-index;
+}
+
+.dmla-overlay {
+  background: radial-gradient(
+    circle at center,
+    rgba(0, 0, 0, 0.8) 20%,
+    rgba(0, 0, 0, 0.6) 30%,
+    rgba(0, 0, 0, 0.4) 40%,
+    transparent 60%
+  );
+}
+
+.custom-cursor {
+  position: fixed;
+  width: 20px;
+  height: 20px;
+  background-color: red;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: $overlay-z-index + 1;
+  transition: transform 0.1s ease-out;
+}
+
+.custom-cursor.trembling {
+  animation: tremble 0.1s infinite;
+}
+
+// Animations
+@keyframes tremble {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-3px, -3px); }
+  50% { transform: translate(3px, 3px); }
+  75% { transform: translate(-3px, 3px); }
+  100% { transform: translate(3px, -3px); }
+}
+
+@keyframes cognitive-distraction {
+  0% { opacity: 1; }
+  50% { opacity: 0.7; }
+  100% { opacity: 1; }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  #preview {
+    height: 400px;
+  }
+
+  .btn-group {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Accessibilité
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+// Focus visible
+*:focus-visible {
+  outline: 3px solid $orange;
+  outline-offset: 2px;
 }

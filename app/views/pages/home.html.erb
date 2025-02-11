@@ -8,11 +8,15 @@
       </p>
 
       <%= form_tag simulate_path, method: :get, class: "mt-4" do %>
-        <div class="input-group">
-          <%= text_field_tag :url, params[:url], class: "form-control custom-placeholder", placeholder: "Entrez l'URL d'un site web" %>
+        <div class="input-group d-flex align-items-center gap-2">
+          <label for="url" class="visually-hidden">URL du site web</label>
+          <%= text_field_tag :url, params[:url], class: "form-control custom-placeholder",
+              aria: { describedby: "urlHelp" } %>
           <button class="btn custom-btn" type="submit">Simuler</button>
         </div>
+        <small id="urlHelp" class="form-text text-x">Veuillez entrer une URL valide.</small>
       <% end %>
+
     </div>
 
     <div class="col-md-6">

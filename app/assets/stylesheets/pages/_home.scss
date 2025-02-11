@@ -19,14 +19,22 @@
     font-size: 1rem;
   }
 
-  .form-control {
-    border: 1.5px solid $blue;
+  .input-group > :not(:first-child):not(.dropdown-menu):not(.valid-tooltip):not(.valid-feedback):not(.invalid-tooltip):not(.invalid-feedback) {
     border-radius: 5px;
-    padding: 10px;
-    color: $light-blue;
   }
 
-  .custom-placeholder::placeholder {
+  .input-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .form-control {
+    flex: 1;
+    border: 1.5px solid $blue;
+    border-radius: 5px;
+    padding: 9px;
     color: $light-blue;
   }
 
@@ -42,11 +50,26 @@
     &:hover, &:focus {
       background-color: $light-blue;
       transform: scale(1.05);
-    }
-
-    &:focus {
-      outline: 2px solid $orange;
+      outline: 3px solid $pink;
       outline-offset: 2px;
     }
   }
+
+  .text-x {
+    font-size: 0.9rem;
+    color: $pink !important;
+  }
+
+  /* Accessibilité */
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+  }
+
 }
