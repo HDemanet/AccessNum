@@ -12,6 +12,11 @@ export default class extends Controller {
     this.activeFilter = null;
     this.setupKeyboardNavigation();
     this.setupCursorTracking();
+
+    const screenReaderButton = document.getElementById('screen-reader-toggle');
+    if (screenReaderButton) {
+      screenReaderButton.addEventListener('click', () => this.startScreenReader());
+    }
   }
 
   setupKeyboardNavigation() {
@@ -95,9 +100,9 @@ export default class extends Controller {
 
   simulateDaltonisme(iframe) {
     const types = [
-      { name: 'protanopia', label: 'Protanopie (difficulté avec le rouge)' },
-      { name: 'deuteranopia', label: 'Deutéranopie (difficulté avec le vert)' },
-      { name: 'tritanopia', label: 'Tritanopie (difficulté avec le bleu)' }
+      { name: 'protanopia', label: 'protanopie (difficulté avec le rouge)' },
+      { name: 'deuteranopia', label: 'deutéranopie (difficulté avec le vert)' },
+      { name: 'tritanopia', label: 'tritanopie (difficulté avec le bleu)' }
     ];
 
     this.currentDaltonismIndexValue = (this.currentDaltonismIndexValue + 1) % types.length;
@@ -106,13 +111,13 @@ export default class extends Controller {
     iframe.style.filter = `url('#${currentType.name}')`;
 
     this.updateInfo(
-      `Daltonisme - ${currentType.label}`,
-      `Simulation du type de daltonisme : ${currentType.label}. Cliquez à nouveau sur le bouton pour voir un autre type de daltonisme.`,
+      `Daltonisme - ${currentType.name}`,
+      `Type de daltonisme : ${currentType.label}.`,
       [
         "Utilisez des contrastes élevés (WCAG 2.1 - 1.4.3)",
         "Ne pas utiliser la couleur seule pour transmettre l'information (WCAG 2.1 - 1.4.1)",
         "Fournir des alternatives textuelles pour les informations basées sur la couleur",
-        `Tip: Cette simulation montre le ${currentType.name}, cliquez à nouveau pour voir les autres types`
+        `Tip : Cette simulation montre le ${currentType.name}, cliquez à nouveau pour voir les autres types`
       ]
     );
   }
@@ -123,7 +128,7 @@ export default class extends Controller {
     container.appendChild(overlay);
 
     this.updateInfo(
-      "DMLA (Dégénérescence Maculaire Liée à l'Âge)",
+      "DMLA - Dégénérescence Maculaire Liée à l'Âge",
       "La DMLA affecte la vision centrale, rendant difficile la lecture et la reconnaissance des détails.",
       [
         "Proposer des options de zoom (WCAG 2.1 - 1.4.4)",
@@ -134,7 +139,7 @@ export default class extends Controller {
   }
 
   simulateCataracte(iframe) {
-    iframe.style.filter = "brightness(70%) contrast(120%) blur(1px) sepia(20%)";
+    iframe.style.filter = "contrast(90%) blur(5px)";
 
     this.updateInfo(
       "Cataracte",
@@ -148,12 +153,35 @@ export default class extends Controller {
   }
 
   simulateCecite(iframe) {
-    iframe.style.opacity = "0.1";
-    this.startScreenReader();
+    let existingOverlay = document.getElementById('cecite-overlay');
+    if (existingOverlay) {
+        existingOverlay.remove();
+    }
+    let overlay = document.createElement('div');
+    overlay.id = 'cecite-overlay'; // Ajouter un identifiant unique à l'overlay
+    overlay.style.position = "absolute";
+    overlay.style.top = 0;
+    overlay.style.left = 0;
+    overlay.style.width = "100%";
+    overlay.style.height = "100%";
+    overlay.style.backgroundColor = "black";
+    overlay.style.opacity = "0.95";  // Opacité élevée pour simuler la cécité
+    overlay.style.zIndex = "9999";   // S'assurer que l'overlay est au-dessus du contenu
+
+    // Ajouter l'overlay à l'iframe
+    iframe.style.position = "relative"; // Assurer que l'iframe est en position relative pour positionner l'overlay dessus
+    iframe.parentElement.appendChild(overlay); // Ajouter l'overlay au parent de l'iframe
+
+    const screenReaderButton = document.getElementById('screen-reader-toggle');
+    if (screenReaderButton) {
+      screenReaderButton.classList.remove('d-none');
+    }
+
+    // this.startScreenReader();
 
     this.updateInfo(
       "Cécité",
-      "Les personnes aveugles utilisent des lecteurs d'écran pour naviguer sur le web.",
+      "Les personnes aveugles ou très malvoyantes utilisent des lecteurs d'écran pour naviguer sur leus smartphones, tablettes ou ordinateurs.",
       [
         "Fournir des alternatives textuelles pour les images (WCAG 2.1 - 1.1.1)",
         "Structurer le contenu avec des balises sémantiques",
@@ -161,6 +189,13 @@ export default class extends Controller {
         "Décrire les contenus complexes (graphiques, tableaux)"
       ]
     );
+  }
+
+  removeCeciteOverlay() {
+    let overlay = document.getElementById('cecite-overlay');
+    if (overlay) {
+        overlay.remove();
+    }
   }
 
   simulateSurdite(iframe) {
@@ -239,6 +274,9 @@ export default class extends Controller {
 
     // Nettoie les overlays
     container.querySelectorAll('.simulation-overlay').forEach(el => el.remove());
+
+    // Appel de la méthode pour supprimer l'overlay de la cécité
+    this.removeCeciteOverlay();
 
     // Réinitialise le curseur
     cursor.classList.add('d-none');

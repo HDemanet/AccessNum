@@ -32,6 +32,7 @@ $overlay-z-index: 1000;
   background-color: white;
   border: 2px solid $blue;
   color: $blue;
+  border-radius: 5px;
 }
 
 .btn-group .btn[aria-pressed="true"] {
@@ -58,14 +59,12 @@ $overlay-z-index: 1000;
 .col-md-7, .col-md-5 {
   display: flex;
   flex-direction: column;
-  height: 100%;
 }
 
 .col-md-5 > .border {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  height: 100%;
 }
 
 .recommendations {
@@ -128,10 +127,12 @@ $overlay-z-index: 1000;
 .dmla-overlay {
   background: radial-gradient(
     circle at center,
-    rgba(0, 0, 0, 0.8) 20%,
-    rgba(0, 0, 0, 0.6) 30%,
-    rgba(0, 0, 0, 0.4) 40%,
-    transparent 60%
+    rgba(0, 0, 0, 0.95) 25%,
+    rgba(0, 0, 0, 0.8) 35%,
+    rgba(0, 0, 0, 0.6) 45%,
+    rgba(0, 0, 0, 0.4) 55%,
+    rgba(0, 0, 0, 0.2) 65%,
+    transparent 75%
   );
 }
 
@@ -192,4 +193,8 @@ $overlay-z-index: 1000;
 *:focus-visible {
   outline: 3px solid $orange;
   outline-offset: 2px;
+}
+
+li {
+  color: #0e0000bf;
 }

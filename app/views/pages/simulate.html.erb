@@ -51,6 +51,10 @@
       </div>
     </div>
 
+    <button id="screen-reader-toggle" class="btn btn-info mt-3 d-none" aria-label="Activer le lecteur d'écran">
+      Activer le lecteur d'écran
+    </button>
+
     <div class="row mt-4">
       <div class="col-md-7 position-relative">
         <div data-simulate-target="overlayContainer" class="overlay-container">
@@ -68,8 +72,8 @@
         </p>
       </div>
 
-      <div class="col-md-5">
-        <div class="mt-3 p-3 border rounded bg-light">
+      <div class="col-md-5 position-relative">
+        <div class="p-3 border rounded bg-light">
           <h4 data-simulate-target="title" class="text">Sélectionnez une simulation</h4>
           <p data-simulate-target="description" class="text-muted">
             Cliquez sur un bouton pour voir les effets.
@@ -91,6 +95,6 @@
               aria: { describedby: "urlHelp" } %>
           <button class="btn custom-btn" type="submit">Simuler</button>
         </div>
-        <small id="urlHelp" class="form-text text-x">Veuillez entrer une URL valide.</small>
+        <small id="urlHelp" class="form-text text-x">Veuillez entrer une autre URL valide.</small>
       <% end %>
 </div>
