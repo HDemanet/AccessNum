@@ -73,3 +73,6 @@ group :test do
   gem "selenium-webdriver"
 end
 gem 'ostruct'
+
+gem 'nokogiri'
+gem 'open-uri'

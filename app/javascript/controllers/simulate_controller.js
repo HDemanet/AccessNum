@@ -14,6 +14,10 @@ export default class extends Controller {
     this.setupCursorTracking();
     this.audioContext = null;
     this.gainNode = null;
+    this.utterance = null;
+    this.oscillator = null;
+    this.mediaElements = [];
+    this.originalUrl = null;
   }
 
   setupKeyboardNavigation() {
@@ -114,7 +118,7 @@ export default class extends Controller {
         "Utilisez des contrastes élevés (WCAG 2.1 - 1.4.3)",
         "Ne pas utiliser la couleur seule pour transmettre l'information (WCAG 2.1 - 1.4.1)",
         "Fournir des alternatives textuelles pour les informations basées sur la couleur",
-        `Tip : Cette simulation montre le ${currentType.name}, cliquez à nouveau pour voir les autres types`
+        `💡 Cette simulation montre le ${currentType.name}, cliquez à nouveau pour voir les autres types de daltonisme.`
       ]
     );
   }
@@ -169,41 +173,32 @@ export default class extends Controller {
     iframe.style.position = "relative"; // Assurer que l'iframe est en position relative pour positionner l'overlay dessus
     iframe.parentElement.appendChild(overlay); // Ajouter l'overlay au parent de l'iframe
 
-    // Vérifie si le bouton existe déjà, sinon le crée
-    let screenReaderButton = document.getElementById('play-screen-reader');
-    if (!screenReaderButton) {
-        screenReaderButton = document.createElement('button');
-        screenReaderButton.id = 'play-screen-reader';
-        screenReaderButton.className = 'btn btn-primary';
-        screenReaderButton.innerHTML = '<i class="fas fa-play"></i> Démarrer le lecteur d\'écran';
-        screenReaderButton.style.position = 'absolute';
-        screenReaderButton.style.top = '50%';
-        screenReaderButton.style.left = '50%';
-        screenReaderButton.style.transform = 'translate(-50%, -50%)'; // Centrer le bouton
-        screenReaderButton.style.zIndex = "10000";  // Assurer qu'il est au-dessus de l'overlay
-        overlay.appendChild(screenReaderButton); // Ajouter le bouton à l'overlay
-    }
+    let screenReaderButton = document.createElement('button');
+    screenReaderButton.id = 'play-screen-reader';
+    screenReaderButton.className = 'btn btn-warning';
+    screenReaderButton.innerHTML = '<i class="fas fa-play"></i> Démarrer le lecteur d\'écran';
+    screenReaderButton.style.position = 'absolute';
+    screenReaderButton.style.top = '50%';
+    screenReaderButton.style.left = '50%';
+    screenReaderButton.style.transform = 'translate(-50%, -50%)';
+    screenReaderButton.style.zIndex = "10000";
+    overlay.appendChild(screenReaderButton);
 
-    // Ajouter l'événement pour démarrer le lecteur d'écran
+    let isPlaying = false;
     screenReaderButton.addEventListener('click', () => {
-      if (window.speechSynthesis.speaking) {
-          // Si la lecture est en cours, on met en pause
-          window.speechSynthesis.pause();
-          screenReaderButton.innerHTML = '<i class="fas fa-play"></i> Reprendre la lecture';
-          screenReaderButton.classList.remove('btn-secondary');
-          screenReaderButton.classList.add('btn-primary');
-      } else if (window.speechSynthesis.paused) {
-          // Si la lecture est en pause, on reprend
-          window.speechSynthesis.resume();
-          screenReaderButton.innerHTML = '<i class="fas fa-pause"></i> Pause';
-          screenReaderButton.classList.add('btn-secondary');
-          screenReaderButton.classList.remove('btn-primary');
+      if (isPlaying) {
+        window.speechSynthesis.cancel();
+        this.utterance = null;
+        screenReaderButton.innerHTML = '<i class="fas fa-play"></i> Démarrer le lecteur d\'écran';
+        screenReaderButton.classList.remove('btn-info');
+        screenReaderButton.classList.add('btn-warning');
+        isPlaying = false;
       } else {
-          // Si la lecture n'a pas encore commencé, on la lance
-          this.startScreenReader();
-          screenReaderButton.innerHTML = '<i class="fas fa-pause"></i> Pause';
-          screenReaderButton.classList.add('btn-secondary');
-          screenReaderButton.classList.remove('btn-primary');
+        this.startScreenReader();
+        screenReaderButton.innerHTML = '<i class="fas fa-pause"></i> Arrêter';
+        screenReaderButton.classList.add('btn-info');
+        screenReaderButton.classList.remove('btn-warning');
+        isPlaying = true;
       }
     });
 
@@ -229,31 +224,63 @@ export default class extends Controller {
   simulateSurdite(iframe) {
     if (!this.audioContext) {
       this.audioContext = new (window.AudioContext)();
-      this.gainNode = this.audioContext.createGain();
-      this.gainNode.connect(this.audioContext.destination);
     }
-    this.gainNode.gain.value = 0.1; // Réduire le volume
-    const captionsOverlay = document.createElement('div');
-    captionsOverlay.id = 'captions-overlay';
-    captionsOverlay.className = 'position-absolute bottom-0 w-100 text-center p-3 bg-dark text-white';
-    captionsOverlay.style.zIndex = "9999";
-    captionsOverlay.innerHTML = `
-      <div class="captions-container">
-        <p class="mb-0">⚠️ Les contenus audio de cette page ne sont pas accessibles sans sous-titres.</p>
-        <small>Les personnes sourdes ou malentendantes ont besoin de sous-titres et de transcriptions.</small>
-      </div>
-    `;
 
-    iframe.parentElement.appendChild(captionsOverlay);
+    // Créer l'overlay avec le bouton centré
+    let overlay = document.createElement('div');
+    overlay.id = 'hearing-overlay';
+    overlay.style.position = "absolute";
+    overlay.style.top = 0;
+    overlay.style.left = 0;
+    overlay.style.width = "100%";
+    overlay.style.height = "12%";
+    overlay.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
+    overlay.style.display = "flex";
+    overlay.style.justifyContent = "center";
+    overlay.style.alignItems = "center";
+    overlay.style.zIndex = "9999";
+
+    let tinnitusButton = document.createElement('button');
+    tinnitusButton.id = 'toggle-tinnitus';
+    tinnitusButton.className = 'btn btn-warning';
+    tinnitusButton.innerHTML = '<i class="fas fa-play"></i> Démarrer l\'acouphène';
+    overlay.appendChild(tinnitusButton);
+
+    iframe.parentElement.appendChild(overlay);
+
+    let isPlaying = false;
+    tinnitusButton.addEventListener('click', () => {
+      if (isPlaying) {
+        if (this.oscillator) {
+          this.oscillator.stop();
+          this.oscillator = null;
+        }
+        tinnitusButton.innerHTML = '<i class="fas fa-play"></i> Démarrer l\'acouphène';
+        tinnitusButton.classList.remove('btn-info');
+        tinnitusButton.classList.add('btn-warning');
+        isPlaying = false;
+      } else {
+        this.oscillator = this.audioContext.createOscillator();
+        this.oscillator.type = 'sine';
+        this.oscillator.frequency.setValueAtTime(4000, this.audioContext.currentTime);
+        this.oscillator.connect(this.audioContext.destination);
+        this.oscillator.start();
+
+        tinnitusButton.innerHTML = '<i class="fas fa-pause"></i> Arrêter l\'acouphène';
+        tinnitusButton.classList.add('btn-info');
+        tinnitusButton.classList.remove('btn-warning');
+        isPlaying = true;
+      }
+    });
 
     this.updateInfo(
-      "Surdité",
-      "Les personnes sourdes ou malentendantes ne peuvent pas accéder aux contenus audio sans alternatives textuelles.",
+      "Surdité et acouphènes",
+      "Simulation d'acouphènes : un sifflement constant que beaucoup de personnes malentendantes perçoivent en permanence.",
       [
         "Fournir des sous-titres pour tous les contenus audio (WCAG 2.1 - 1.2.2)",
         "Proposer des transcriptions textuelles",
         "Éviter les contenus qui ne fonctionnent qu'avec du son",
-        "Permettre le contrôle du volume et la désactivation du son"
+        "Fournir des alternatives visuelles aux signaux sonores"
       ]
     );
   }
@@ -295,16 +322,17 @@ export default class extends Controller {
   }
 
   startScreenReader() {
-    if (window.speechSynthesis.speaking) {
-        // Si la lecture est déjà en cours, ne rien faire
-        return;
+    if (this.utterance) {
+      window.speechSynthesis.cancel();
     }
 
     const textToRead = "Simulation du lecteur d'écran activée. Une personne aveugle utiliserait un véritable lecteur d'écran comme NVDA ou JAWS pour parcourir cette page.";
-    const utterance = new SpeechSynthesisUtterance(textToRead);
-    utterance.lang = 'fr-FR';
+    this.utterance = new SpeechSynthesisUtterance(textToRead);
+    this.utterance.lang = 'fr-FR';
+    this.utterance.rate = 1.0;
+    this.utterance.pitch = 1.0;
 
-    window.speechSynthesis.speak(utterance);
+    window.speechSynthesis.speak(this.utterance);
   }
 
   setupScreenReaderControls() {
@@ -340,39 +368,43 @@ export default class extends Controller {
     const container = this.overlayContainerTarget;
     const cursor = this.cursorTarget;
 
-    // Réinitialise tous les effets
-    this.activeFilter = null;
-    iframe.style.filter = "";
-    iframe.style.opacity = "1";
-    iframe.style.pointerEvents = "auto";
-    iframe.style.animation = "";
-    iframe.style.transition = "";
+    // Réinitialiser complètement l'iframe
+    iframe.style = ""; // Réinitialise tous les styles
+    iframe.style.position = "relative"; // Maintient uniquement le positionnement nécessaire
 
-    // Nettoie les overlays
-    container.querySelectorAll('.simulation-overlay').forEach(el => el.remove());
-    this.removeCeciteOverlay();
+    // Nettoyage complet des overlays
+    document.querySelectorAll('#cecite-overlay, #hearing-overlay, .simulation-overlay').forEach(overlay => {
+      overlay.remove();
+    });
 
-    // Supprimer les contrôles du lecteur d'écran
-    const screenReaderControls = document.getElementById('screen-reader-controls');
-    screenReaderControls?.remove();
-
-    // Supprimer l'overlay des sous-titres
-    const captionsOverlay = document.getElementById('captions-overlay');
-    captionsOverlay?.remove();
+    // Arrêter tous les sons
+    if (this.oscillator) {
+      this.oscillator.stop();
+      this.oscillator = null;
+    }
+    if (this.utterance) {
+      window.speechSynthesis.cancel();
+      this.utterance = null;
+    }
 
     // Réinitialiser l'audio
     if (this.audioContext) {
-      this.gainNode.gain.value = 1;
+      if (this.gainNode) {
+        this.gainNode.gain.value = 1.0;
+      }
+      // Ne pas fermer le contexte audio car il pourrait être réutilisé
     }
 
-    // Réinitialise le curseur
+    // Réinitialiser le curseur
     cursor.classList.add('d-none');
     cursor.classList.remove('trembling');
 
-    // Arrête la synthèse vocale
-    window.speechSynthesis.cancel();
+    // Réinitialiser les états
+    this.activeFilter = null;
+    this.originalUrl = null;
+    this.mediaElements = [];
 
-    // Réinitialise les informations
+    // Réinitialiser les informations
     this.updateInfo(
       "Sélectionnez une simulation",
       "Cliquez sur un bouton pour voir les effets.",

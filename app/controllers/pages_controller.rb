@@ -3,6 +3,7 @@ class PagesController < ApplicationController
   end
 
   def simulate
+    response.headers['X-Frame-Options'] = 'SAMEORIGIN'
   end
 
   def about
