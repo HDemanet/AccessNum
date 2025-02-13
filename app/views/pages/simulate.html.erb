@@ -83,13 +83,18 @@
     </div>
   <% end %>
 
-  <%= form_tag simulate_path, method: :get, class: "mt-4" do %>
-        <div class="input-group d-flex align-items-center gap-2">
-          <label for="url" class="visually-hidden">URL du site web</label>
-          <%= text_field_tag :url, params[:url], class: "form-control custom-placeholder",
-              aria: { describedby: "urlHelp" } %>
-          <button class="btn custom-btn" type="submit">Simuler</button>
-        </div>
-        <small id="urlHelp" class="form-text text-x">Veuillez entrer l'URL d'un autre site à tester ou d'un autre site qui autorise la connexion.</small>
-      <% end %>
+ <%= form_tag simulate_path, method: :get, class: "mt-4" do %>
+  <div class="input-group d-flex align-items-center gap-2">
+    <label for="url" class="visually-hidden">URL du site web</label>
+    <%= text_field_tag :url, params[:url], class: "form-control custom-placeholder", aria: { describedby: "urlHelp" } %>
+    <button class="btn custom-btn" type="submit">Simuler</button>
+  </div>
+
+  <!-- Texte explicatif pour l'URL complète -->
+  <small id="urlHelp" class="form-text text-x">
+    AccessNum n'est pas un moteur de recherche.<br>
+    Veuillez entrer l'adresse URL complète du site, par exemple:
+    <code>https://www.rtbf.be/</code> et non seulement <code>rtbf.be</code>.
+  </small>
+  <% end %>
 </div>
