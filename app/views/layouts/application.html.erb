@@ -1,8 +1,33 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
   <head>
-    <title>AccessNum - À vous de viewport</title>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title><%= content_for?(:title) ? yield(:title) : "AccessNum - À vous de voir" %></title>
+
+    <%= favicon_link_tag "favicon.ico", rel: "shortcut icon" %>
+    <%= favicon_link_tag "favicon.svg", rel: "icon", type: "image/svg+xml" %>
+    <%= favicon_link_tag "favicon-96x96.png", rel: "icon", type: "image/png", sizes: "96x96" %>
+    <%= favicon_link_tag "apple-touch-icon.png", rel: "apple-touch-icon", sizes: "180x180" %>
+
+    <%= tag :link, rel: "manifest", href: asset_path("site.webmanifest") %>
+
+    <meta name="description" content="<%= content_for?(:description) ? yield(:description) : 'AccessNum - Plateforme pour se mettre dans la peau de différents utilisateurs et comprendre ainsi l\'importance de l\'accessibilité numérique.' %>">
+
+    <meta property="og:title" content="<%= content_for?(:title) ? yield(:title) : 'AccessNum - À vous de voir' %>">
+    <meta property="og:description" content="<%= content_for?(:description) ? yield(:description) : 'AccessNum - Plateforme pour se mettre dans la peau de différents utilisateurs et comprendre ainsi l\'importance de l\'accessibilité numérique.' %>">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="<%= request.original_url %>">
+    <meta property="og:image" content="<%= asset_url('og-image.png') %>">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<%= content_for?(:title) ? yield(:title) : 'AccessNum - À vous de voir' %>">
+    <meta name="twitter:description" content="<%= content_for?(:description) ? yield(:description) : 'AccessNum - Plateforme pour se mettre dans la peau de différents utilisateurs et comprendre ainsi l\'importance de l\'accessibilité numérique.' %>">
+    <meta name="twitter:image" content="<%= asset_url('og-image.png') %>">
+
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
