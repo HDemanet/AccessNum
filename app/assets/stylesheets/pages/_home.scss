@@ -60,16 +60,17 @@
     color: $pink !important;
   }
 
-  /* Accessibilité */
-  .visually-hidden {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    border: 0;
+  .form-label.text-muted {
+    font-size: 0.875rem; /* Plus petit */
+    color: #6c757d; /* Gris discret */
+    display: block; /* S'assurer qu'il est bien positionné */
+    margin-bottom: 4px; /* Un petit espace au-dessus du champ */
   }
+
+  .form-control.custom-placeholder {
+    background-color: #fff; /* Fond blanc explicite */
+    color: #000; /* Texte noir pour un bon contraste */
+  }
+
 
 }

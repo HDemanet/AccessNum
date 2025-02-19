@@ -11,9 +11,9 @@
 
       <%= form_tag simulate_path, method: :get, class: "mt-4" do %>
         <div class="input-group d-flex align-items-center gap-2">
-          <label for="url" class="visually-hidden">URL du site web</label>
+          <label for="url" class="form-label text-muted small">URL du site web</label>
           <%= text_field_tag :url, params[:url], class: "form-control custom-placeholder",
-              aria: { describedby: "urlHelp" } %>
+              aria: { describedby: "urlHelp", label: "URL du site web"  } %>
           <button class="btn custom-btn" type="submit">Simuler</button>
         </div>
         <small id="urlHelp" class="form-text text-x">
