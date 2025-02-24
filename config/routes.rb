@@ -11,4 +11,8 @@ Rails.application.routes.draw do
   get 'simulate', to: 'pages#simulate'
   get 'about', to: 'pages#about'
   get 'me', to: 'pages#me'
+
+  get 'plan-du-site', to: 'pages#plan_du_site'
+  get 'accessibilite', to: 'pages#accessibilite'
+  get 'mentions-legales', to: 'pages#mentions_legales'
 end

@@ -1,3 +1,38 @@
-<footer class="bg-light text-secondary pt-3 text-center">
-  <p>&copy; AccessNum, à vous de voir 2025</p>
+<footer class="bg-light pt-3 text-center">
+  <div class="container">
+    <div class="d-flex align-items-center justify-content-center">
+      <img src="<%= asset_path('logo.png') %>" alt="Logo du site AccessNum" class="logo me-2" style="height: 40px;">
+      <strong>AccessNum, à vous de voir</strong>
+    </div>
+    <br>
+    <p>
+      <a href="https://github.com/HDemanet" target="_blank" aria-label="GitHub AccessNum">
+        <i class="fab fa-github"></i> GitHub
+      </a> |
+      <a href="https://www.linkedin.com/in/hélène-demanet" target="_blank" aria-label="LinkedIn AccessNum">
+        <i class="fab fa-linkedin"></i> LinkedIn
+      </a>
+    </p>
+
+    <p>
+      <a href="/plan-du-site" aria-label="Plan du site">Plan du site</a> |
+      <a href="/mentions-legales" aria-label="Mentions légales">Mentions légales</a> |
+      <a href="/accessibilite" aria-label="Déclaration d’accessibilité">Accessibilité</a>
+    </p>
+
+    <p>
+      AccessNum respecte votre vie privée, il ne collecte aucune donnée personnelle depuis ce site internet.
+      Les seuls cookies que je dépose le sont autour d'une tasse de café ! 🍪
+    </p>
+  </div>
 </footer>
+
+<style>
+  footer a {
+    color: #031640 !important;
+    text-decoration: none !important;
+  }
+  footer a:hover, footer a:focus {
+    text-decoration: underline !important;
+  }
+</style>
