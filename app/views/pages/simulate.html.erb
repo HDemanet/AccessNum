@@ -3,9 +3,9 @@
 
   <% if params[:url].present? %>
     <p class="text-center text-muted">
-      Comme une démonstration vaut souvent mieux que mille mots, AccessNum permet de simuler différents types de handicap afin de comprendre comment un site est perçu par différents utilisateurs, et ainsi pourquoi il est essentiel de respecter les normes d'accessibilité.<br>
-      À vous de jouer ! Sélectionnez une particularité.
+      Comme une démonstration vaut souvent mieux que mille mots, AccessNum permet de simuler différents types de handicap afin de comprendre comment un site est perçu par différents utilisateurs, et ainsi pourquoi il est essentiel de respecter les normes d'accessibilité.
     </p>
+    <p>À vous de jouer ! Sélectionnez une particularité.</p>
 
     <!-- SVG Filters pour le daltonisme -->
     <svg style="display: none;">
@@ -84,7 +84,7 @@
   <% end %>
 
  <%= form_tag simulate_path, method: :get, class: "mt-4" do %>
-  <div class="input-group d-flex align-items-center gap-2">
+  <div class="input-group d-flex align-items-center gap-2" style="margin-bottom: 15px;">
     <label for="url" class="visually-hidden">URL du site web</label>
     <%= text_field_tag :url, params[:url], class: "form-control custom-placeholder", aria: { describedby: "urlHelp" } %>
     <button class="btn custom-btn" type="submit">Simuler</button>
@@ -92,7 +92,8 @@
 
   <!-- Texte explicatif pour l'URL complète -->
   <small id="urlHelp" class="form-text text-x">
-    AccessNum n'est pas un moteur de recherche.<br>
+    <i class="fas fa-info-circle"></i> Note :
+    AccessNum n'est pas un moteur de recherche.
     Veuillez entrer l'adresse URL complète du site, par exemple:
     <code>https://www.rtbf.be/</code> et non seulement <code>rtbf.be</code>.
   </small>

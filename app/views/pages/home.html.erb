@@ -2,22 +2,20 @@
   <div class="row justify-content-center align-items-center">
     <div class="col-md-6">
       <h1 class="display-4 fw-bold">AccessNum, à vous de voir</h1>
-      <p class="lead">
-        Le numérique devrait être une porte ouverte pour tous, pas un obstacle. Pourtant, de nombreux utilisateurs font face à des barrières invisibles chaque jour sur Internet.<br>
-        <br>
-        Entrez une URL et vivez une expérience unique ! Découvrez comment un site est perçu par différents utilisateurs. <br>
-        Une sensibilisation interactive et concrète à l'importance de l'accessibilité numérique.
-      </p>
+      <p class="lead">Le numérique devrait être une porte ouverte pour tous, pas un obstacle. Pourtant, de nombreux utilisateurs font face à des barrières invisibles chaque jour sur Internet.</p>
+      <p class="lead">Entrez une URL et vivez une expérience unique ! Découvrez comment un site est perçu par différents utilisateurs.</p>
+      <p class="lead">Une sensibilisation interactive et concrète à l'importance de l'accessibilité numérique.</p>
 
       <%= form_tag simulate_path, method: :get, class: "mt-4" do %>
-        <div class="input-group d-flex align-items-center gap-2">
+        <div class="input-group d-flex align-items-center gap-2" style="margin-bottom: 10px;">
           <label for="url" class="form-label text-muted small">URL du site web</label>
           <%= text_field_tag :url, params[:url], class: "form-control custom-placeholder",
               aria: { describedby: "urlHelp", label: "URL du site web"  } %>
           <button class="btn custom-btn" type="submit">Simuler</button>
         </div>
         <small id="urlHelp" class="form-text text-x">
-          AccessNum n'est pas un moteur de recherche.<br>
+          <i class="fas fa-info-circle"></i> Note :
+          AccessNum n'est pas un moteur de recherche.
           Il est essentiel d'indiquer l'adresse URL complète, par exemple:
           <code>https://www.rtbf.be/</code> et non seulement <code>rtbf.be</code>.
         </small>
