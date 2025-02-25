@@ -28,7 +28,7 @@ Rails.application.configure do
   config.assets.js_compressor = nil
 
   # Do not fall back to assets pipeline if a precompiled asset is missed.
-  config.assets.compile = false
+  config.assets.compile = true
   config.assets.precompile += %w[controllers/simulate_controller.js]
 
 
