@@ -30,5 +30,10 @@ module AccessNum
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+
+    # Désactiver les sessions basées sur les cookies
+    config.middleware.delete ActionDispatch::Session::CookieStore
+    # Désactiver la protection CSRF qui utilise des cookies
+    config.action_controller.default_protect_from_forgery = false
   end
 end
