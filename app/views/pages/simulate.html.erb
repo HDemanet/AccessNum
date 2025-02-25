@@ -1,8 +1,8 @@
 <div data-controller="simulate" class="container mt-4">
-  <h2 class="text-center">Simulateur de particularités</h2>
+  <h2 class="text-center" id="simulate-title">Simulateur de particularités</h2>
 
   <% if params[:url].present? %>
-    <p class="text-center text-muted">
+    <p class="text-center text-muted" aria-live="polite">
       Comme une démonstration vaut souvent mieux que mille mots, AccessNum permet de simuler différents types de handicap afin de comprendre comment un site est perçu par différents utilisateurs, et ainsi pourquoi il est essentiel de respecter les normes d'accessibilité.
     </p>
     <p>À vous de jouer ! Sélectionnez une particularité.</p>
@@ -25,26 +25,26 @@
     <div class="row mt-4">
       <div class="col-12 text-center mb-3">
         <div class="btn-group d-flex flex-wrap justify-content-center" role="group" aria-label="Simulations d'accessibilité">
-          <button data-action="click->simulate#toggle" data-type="daltonisme" class="btn btn-outline m-2 rounded" aria-pressed="false">
-            <i class="fas fa-palette"></i> Daltonisme
+          <button data-action="click->simulate#toggle" data-type="daltonisme" class="btn btn-outline m-2 rounded" aria-pressed="false" aria-label="Simuler le daltonisme">
+            <i class="fas fa-palette" aria-hidden="true"></i> Daltonisme
           </button>
-          <button data-action="click->simulate#toggle" data-type="dmla" class="btn btn-outline m-2 rounded" aria-pressed="false">
-            <i class="fas fa-low-vision"></i> DMLA
+          <button data-action="click->simulate#toggle" data-type="dmla" class="btn btn-outline m-2 rounded" aria-pressed="false" aria-label="Simuler la DMLA">
+            <i class="fas fa-low-vision" aria-hidden="true"></i> DMLA
           </button>
-          <button data-action="click->simulate#toggle" data-type="cataracte" class="btn btn-outline m-2 rounded" aria-pressed="false">
-            <i class="fas fa-glasses"></i> Cataracte
+          <button data-action="click->simulate#toggle" data-type="cataracte" class="btn btn-outline m-2 rounded" aria-pressed="false" aria-label="Simuler la cataracte">
+            <i class="fas fa-glasses" aria-hidden="true"></i> Cataracte
           </button>
-          <button data-action="click->simulate#toggle" data-type="cecite" class="btn btn-outline m-2 rounded" aria-pressed="false">
-            <i class="fas fa-eye-slash"></i> Cécité
+          <button data-action="click->simulate#toggle" data-type="cecite" class="btn btn-outline m-2 rounded" aria-pressed="false" aria-label="Simuler la cécité">
+            <i class="fas fa-eye-slash" aria-hidden="true"></i> Cécité
           </button>
-          <button data-action="click->simulate#toggle" data-type="surdite" class="btn btn-outline m-2 rounded" aria-pressed="false">
-            <i class="fas fa-ear-deaf"></i> Surdité
+          <button data-action="click->simulate#toggle" data-type="surdite" class="btn btn-outline m-2 rounded" aria-pressed="false" aria-label="Simuler la surdité">
+            <i class="fas fa-ear-deaf" aria-hidden="true"></i> Surdité
           </button>
-          <button data-action="click->simulate#toggle" data-type="moteur" class="btn btn-outline m-2 rounded" aria-pressed="false">
-            <i class="fas fa-wheelchair"></i> Handicap moteur
+          <button data-action="click->simulate#toggle" data-type="moteur" class="btn btn-outline m-2 rounded" aria-pressed="false" aria-label="Simuler un handicap moteur">
+            <i class="fas fa-wheelchair" aria-hidden="true"></i> Handicap moteur
           </button>
-          <button data-action="click->simulate#toggle" data-type="cognitif" class="btn btn-outline m-2 rounded" aria-pressed="false">
-            <i class="fas fa-brain"></i> Handicap cognitif
+          <button data-action="click->simulate#toggle" data-type="cognitif" class="btn btn-outline m-2 rounded" aria-pressed="false" aria-label="Simuler un handicap cognitif">
+            <i class="fas fa-brain" aria-hidden="true"></i> Handicap cognitif
           </button>
         </div>
       </div>
@@ -62,7 +62,7 @@
           </iframe>
         </div>
         <div data-simulate-target="cursor" class="custom-cursor d-none"></div>
-        <p id="iframe-error" class="text-danger text-center mt-2 d-none">
+        <p id="iframe-error" class="text-danger text-center mt-2 d-none" role="alert">
           ⚠️ Ce site ne peut pas être affiché en iframe pour des raisons de sécurité.
         </p>
       </div>
@@ -83,19 +83,19 @@
     </div>
   <% end %>
 
- <%= form_tag simulate_path, method: :get, class: "mt-4" do %>
-  <div class="input-group d-flex align-items-center gap-2" style="margin-bottom: 15px;">
-    <label for="url" class="visually-hidden">URL du site web</label>
-    <%= text_field_tag :url, params[:url], class: "form-control custom-placeholder", aria: { describedby: "urlHelp" } %>
-    <button class="btn custom-btn" type="submit">Simuler</button>
-  </div>
+  <%= form_tag simulate_path, { method: :get, class: "mt-4", role: "form", aria: { labelledby: "simulate-title", describedby: "urlHelp" } } do %>
+    <div class="input-group d-flex align-items-center gap-2" style="margin-bottom: 15px;">
+      <label for="url" class="visually-hidden">URL du site web</label>
+      <%= text_field_tag :url, params[:url], class: "form-control custom-placeholder", autocomplete: "url", aria: { describedby: "urlHelp" } %>
+      <button class="btn custom-btn" type="submit" aria-label="Lancer la simulation">Simuler</button>
+    </div>
 
-  <!-- Texte explicatif pour l'URL complète -->
-  <small id="urlHelp" class="form-text text-x">
-    <i class="fas fa-info-circle"></i> Note :
-    AccessNum n'est pas un moteur de recherche.
-    Veuillez entrer l'adresse URL complète du site, par exemple:
-    <code>https://www.rtbf.be/</code> et non seulement <code>rtbf.be</code>.
-  </small>
+    <!-- Texte explicatif pour l'URL complète -->
+    <small id="urlHelp" class="form-text text-x" aria-live="polite">
+      <i class="fas fa-info-circle"></i> Note :
+      AccessNum n'est pas un moteur de recherche.
+      Veuillez entrer l'adresse URL complète du site, par exemple:
+      <code>https://www.rtbf.be/</code> et non seulement <code>rtbf.be</code>.
+    </small>
   <% end %>
 </div>

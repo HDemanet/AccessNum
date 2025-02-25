@@ -1,25 +1,25 @@
-<nav class="navbar navbar-expand-lg">
+<nav class="navbar navbar-expand-lg" role="navigation" aria-label="Navigation principale">
   <div class="container">
-    <a class="navbar-brand d-flex align-items-center" href="<%= root_path %>">
-      <img src="<%= asset_path('logo.png') %>" alt="Logo du site AccessNum" class="logo">
+    <a class="navbar-brand d-flex align-items-center" href="<%= root_path %>" aria-label="Accédez à la page d'accueil d'AccessNum">
+      <img src="<%= asset_path('logo.png') %>" alt="Logo du site AccessNum" class="logo" />
       <span class="ms-2 site-name">AccessNum</span>
     </a>
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-      aria-controls="navbarNav" aria-expanded="false" aria-label="Menu de navigation">
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Ouvrir le menu de navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
         <li class="nav-item">
-          <a class="nav-link" href="<%= simulate_path %>">Simulation</a>
+          <a class="nav-link" href="<%= simulate_path %>" aria-label="Accédez à la page de simulation pour tester l'accessibilité du site">Simulation</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="<%= about_path %>">Accessibilité numérique</a>
+          <a class="nav-link" href="<%= about_path %>" aria-label="Accédez à la page expliquant l'accessibilité numérique">Accessibilité numérique</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="<%= me_path %>">À propos</a>
+          <a class="nav-link" href="<%= me_path %>" aria-label="Accédez à la page de présentation personnelle">À propos</a>
         </li>
       </ul>
     </div>
