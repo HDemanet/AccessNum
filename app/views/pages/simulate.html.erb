@@ -1,5 +1,5 @@
 <div data-controller="simulate" class="container mt-4">
-  <h2 class="text-center" id="simulate-title">Simulateur de particularités</h2>
+  <h1 class="text-center" id="simulate-title">Simulateur de particularités</h1>
 
   <% if params[:url].present? %>
     <p class="text-center text-muted" aria-live="polite">
@@ -69,12 +69,12 @@
 
       <div class="col-md-5 position-relative">
         <div class="p-3 border rounded bg-light">
-          <h4 data-simulate-target="title" class="text">Sélectionnez une simulation</h4>
+          <h2 data-simulate-target="title" class="text">Sélectionnez une simulation</h2>
           <p data-simulate-target="description" class="text-muted">
             Cliquez sur un bouton pour voir les effets.
           </p>
           <div data-simulate-target="recommendations" class="recommendations mt-3 d-none" aria-live="polite">
-            <h5>Recommandations WCAG</h5>
+            <h3>Recommandations WCAG</h3>
             <ul class="list-unstyled">
             </ul>
           </div>
