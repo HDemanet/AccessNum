@@ -76,3 +76,6 @@ gem 'ostruct'
 
 gem 'nokogiri'
 gem 'open-uri'
+
+gem 'sitemap_generator'
+gem 'rack-attack'

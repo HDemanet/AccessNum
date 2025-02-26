@@ -33,6 +33,8 @@
 
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+
+    <link rel="canonical" href="<%= request.original_url.split('?').first %>">
   </head>
 
   <body>

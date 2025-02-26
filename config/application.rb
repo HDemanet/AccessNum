@@ -35,5 +35,6 @@ module AccessNum
     config.middleware.delete ActionDispatch::Session::CookieStore
     # Désactiver la protection CSRF qui utilise des cookies
     config.action_controller.default_protect_from_forgery = false
+    config.middleware.use Rack::Attack
   end
 end

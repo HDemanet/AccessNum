@@ -1,1 +1,10 @@
 # See https://www.robotstxt.org/robotstxt.html for documentation on how to use the robots.txt file
+
+User-agent: *
+Allow: /
+
+# Bloquer les répertoires sensibles
+Disallow: /search/
+Disallow: /caf/
+
+Sitemap: https://www.accessnum.com/sitemap.xml

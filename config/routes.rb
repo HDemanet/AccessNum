@@ -15,4 +15,11 @@ Rails.application.routes.draw do
   get 'plan-du-site', to: 'pages#plan_du_site'
   get 'accessibilite', to: 'pages#accessibilite'
   get 'mentions-legales', to: 'pages#mentions_legales'
+
+  # Bloquer les chemins indésirables en renvoyant explicitement vers la page 404
+  match "/search/*path", to: proc { [404, {}, ["Not Found"]] }, via: :all
+  match "/caf/*path", to: proc { [404, {}, ["Not Found"]] }, via: :all
+
+  # Capturer toutes les extensions .php et autres tentatives suspectes
+  match "/*.php", to: proc { [404, {}, ["Not Found"]] }, via: :all
 end
