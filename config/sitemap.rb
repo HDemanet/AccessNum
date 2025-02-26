@@ -14,4 +14,7 @@ SitemapGenerator::Sitemap.create do
   add '/plan-du-site', changefreq: 'monthly', priority: 0.5
   add '/accessibilite', changefreq: 'monthly', priority: 0.5
   add '/mentions-legales', changefreq: 'monthly', priority: 0.5
+
+  # Routes pour les pages de santé et 404
+  add '/up', changefreq: 'monthly', priority: 0.3
 end
