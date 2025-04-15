@@ -3,7 +3,7 @@
 
 <div class="home-container">
   <div class="row justify-content-center align-items-center">
-    <div class="col-md-6">
+    <div class="col-md-5">
       <h1 class="display-4 fw-bold" id="accessnum-title">AccessNum, à vous de voir</h1>
       <p class="lead">Le numérique devrait être une porte ouverte pour tous, pas un obstacle. Pourtant, de nombreux utilisateurs font face à des barrières invisibles chaque jour sur Internet.</p>
       <p class="lead">Entrez une URL et vivez une expérience unique ! Découvrez comment un site est perçu par différents utilisateurs.</p>
@@ -26,11 +26,12 @@
         La visualisation de certains sites pourrait ne pas être possible. Dans ce cas, nous vous invitons à essayer par exemple le site de votre bibliothèque locale, d'une association...
         </p>
       <% end %>
-
     </div>
 
-    <div class="col-md-6">
-      <img src="<%= asset_path('illustration.png') %>" alt="Illustration de l'accessibilité numérique" class="img-fluid" aria-labelledby="illustration-title">
+    <div class="col-md-7">
+      <div class="image-container">
+        <img src="<%= asset_path('illustration.png') %>" alt="Illustration de l'accessibilité numérique" class="img-fluid" aria-labelledby="illustration-title">
+      </div>
       <p id="illustration-title" class="sr-only">Illustration de l'accessibilité numérique</p>
     </div>
   </div>

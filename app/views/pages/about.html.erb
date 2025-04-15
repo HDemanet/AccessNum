@@ -1,60 +1,449 @@
 <% content_for :title, "À propos de l'accessibilité numérique | AccessNum" %>
-<% content_for :meta_description, "Découvrez pourquoi l'accessibilité numérique est essentielle et quelles sont les obligations légales en Europe et en Belgique." %>
+<% content_for :meta_description, "Découvrez pourquoi l'accessibilité numérique est essentielle et quelles sont les obligations légales en Europe et en Belgique selon les WCAG 2.2 et l'European Accessibility Act." %>
 
-<h1 style="margin-bottom: 20px;" aria-label="À propos de l'accessibilité numérique">À propos de l'accessibilité numérique</h1>
+<div class="container mt-4">
+  <h1 class="mb-4" aria-label="À propos de l'accessibilité numérique">À propos de l'accessibilité numérique</h1>
 
-<p>L'accessibilité numérique est un enjeu majeur pour garantir que tous les utilisateurs, y compris ceux en situation de handicap, puissent accéder aux contenus et services en ligne. Cela inclut des personnes ayant des déficiences visuelles, auditives, motrices ou cognitives, et bien d'autres encore. Un site accessible permet ainsi de rendre le web plus inclusif pour tous.</p>
+  <p>L'accessibilité numérique est un enjeu majeur pour garantir que tous les utilisateurs, y compris ceux en situation de handicap, puissent accéder aux contenus et services en ligne. Cela inclut des personnes ayant des déficiences visuelles, auditives, motrices ou cognitives, et bien d'autres encore. Un site accessible permet ainsi de rendre le web plus inclusif pour tous.</p>
 
-<h2 id="pourquoi" aria-labelledby="pourquoi">Pourquoi l'accessibilité numérique est-elle importante ?</h2>
-<p>Le web est devenu un outil incontournable dans nos vies. Il permet d'accéder à l'information, de communiquer, d'effectuer des démarches administratives, de consulter des services publics ou privés, et bien plus encore. Toutefois, une grande partie de la population, notamment les personnes en situation de handicap, se trouve exclue de ces services. L'accessibilité numérique vise à éliminer ces barrières et à permettre à chacun d'interagir avec le web de manière égale.</p>
+  <div class="info-box mb-4">
+    <p><strong>Le saviez-vous ?</strong> Plus d'un milliard de personnes dans le monde vivent avec une forme de handicap. Sans accessibilité numérique, c'est potentiellement 15% de la population mondiale qui est exclue du monde digital.</p>
+  </div>
 
-<p>Rendre les sites web et les applications plus accessibles profite non seulement aux utilisateurs handicapés, mais aussi à tous les utilisateurs, par exemple en permettant d'écouter un texte quand la lumière est faible ou de lire des sous-titres dans un environnement bruyant.</p>
+  <h2 id="pourquoi" class="mt-5 mb-3" aria-labelledby="pourquoi">Pourquoi l'accessibilité numérique est-elle importante ?</h2>
+  <p>Le web est devenu un outil incontournable dans nos vies. Il permet d'accéder à l'information, de communiquer, d'effectuer des démarches administratives, de consulter des services publics ou privés, et bien plus encore. Toutefois, une grande partie de la population, notamment les personnes en situation de handicap, se trouve exclue de ces services. L'accessibilité numérique vise à éliminer ces barrières et à permettre à chacun d'interagir avec le web de manière égale.</p>
 
-<h2 id="obligations" aria-labelledby="obligations">Les obligations légales en Europe et en Belgique</h2>
-<p>La législation européenne a mis en place des directives pour garantir l'accessibilité des sites web et des applications mobiles, notamment dans le secteur public. La directive 2016/2102 sur l'accessibilité du web (WAD) impose aux États membres de l'Union européenne de rendre les sites web des administrations publiques accessibles. Cette directive est en vigueur depuis décembre 2016 et garantit que les citoyens, quelle que soit leur situation, puissent accéder aux services publics en ligne.</p>
+  <p>Rendre les sites web et les applications plus accessibles profite non seulement aux utilisateurs handicapés, mais aussi à tous les utilisateurs, par exemple en permettant d'écouter un texte quand la lumière est faible ou de lire des sous-titres dans un environnement bruyant.</p>
 
-<p>La Belgique a transposé cette directive en droit national, et les sites web des institutions publiques doivent respecter ces normes d'accessibilité. Chaque site doit publier une déclaration d'accessibilité et permettre aux utilisateurs de signaler des problèmes d'accessibilité ou de demander des informations non accessibles.</p>
+  <h2 id="wcag22" class="mt-5 mb-3" aria-labelledby="wcag22">Les WCAG 2.2 : évolution des normes d'accessibilité</h2>
+  <p>Publiées en octobre 2023 (et depuis mars 2025 en français), les <strong>Web Content Accessibility Guidelines (WCAG) 2.2</strong> représentent l'évolution des normes d'accessibilité numérique. Elles ajoutent neuf nouveaux critères aux WCAG 2.1, améliorant l'accessibilité pour différents types d'utilisateurs.</p>
 
-<p>Il est important de noter que l'accessibilité numérique va au-delà des normes techniques : elle garantit l'égalité d'accès à la technologie pour les personnes handicapées, ce qui contribue à leur indépendance, leur intégration sociale et professionnelle, ainsi qu'à leur participation à la société numérique.</p>
+  <div class="row mb-4">
+    <div class="col-md-6 col-lg-3 mb-3">
+      <div class="category-box">
+        <h3><i class="fas fa-hand-pointer me-2" aria-hidden="true"></i>Handicap moteur</h3>
+        <ul>
+          <li>Espacement des zones cliquables</li>
+          <li>Alternatives aux gestes complexes</li>
+          <li>Adaptations pour les dispositifs de pointage</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-3 mb-3">
+      <div class="category-box">
+        <h3><i class="fas fa-low-vision me-2" aria-hidden="true"></i>Déficience visuelle</h3>
+        <ul>
+          <li>Contrastes renforcés</li>
+          <li>Focus visible amélioré</li>
+          <li>Agrandissement sans perte d'information</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-3 mb-3">
+      <div class="category-box">
+        <h3><i class="fas fa-brain me-2" aria-hidden="true"></i>Déficience cognitive</h3>
+        <ul>
+          <li>Aide contextuelle</li>
+          <li>Délais de saisie adaptables</li>
+          <li>Prévention des erreurs</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-3 mb-3">
+      <div class="category-box">
+        <h3><i class="fas fa-keyboard me-2" aria-hidden="true"></i>Navigation</h3>
+        <ul>
+          <li>Navigation complète au clavier</li>
+          <li>Contenu accessible au focus</li>
+          <li>Structure logique et cohérente</li>
+        </ul>
+      </div>
+    </div>
+  </div>
 
-<h2 id="ressources" aria-labelledby="ressources">Les ressources en Belgique et en Europe</h2>
-<p>Plusieurs initiatives en Belgique et en Europe œuvrent pour améliorer l'accessibilité numérique. Voici quelques ressources essentielles :</p>
-<ul>
-  <li><a href="https://bosa.belgium.be/fr/themes/administration-numerique/inspiration-et-lignes-directrices/inclusion-numerique-et" target="_blank" aria-label="BOSA, Service public fédéral Stratégie et Appui">BOSA (Service public fédéral Stratégie et Appui)</a> - Le service public belge qui traite des questions d'accessibilité numérique et accompagne les administrations publiques dans la mise en conformité avec les normes.</li>
-  <li><a href="https://www.anysurfer.be" target="_blank" aria-label="Anysurfer, plateforme pour l'accessibilité numérique">Anysurfer</a> - Plateforme belge qui promeut l'accessibilité numérique pour les sites web et les applications mobiles, en particulier pour les personnes en situation de handicap.</li>
-  <li><a href="https://www.elevenways.be/fr" target="_blank" aria-label="ElevenWays, agence d'accompagnement en accessibilité numérique">ElevenWays</a> - Agence belge spécialisée dans l'accompagnement des entreprises et institutions pour rendre leurs sites web accessibles.</li>
-  <li><a href="https://www.eqla.be" target="_blank" aria-label="Eqla, association pour les malvoyants">Eqla</a> - Association belge qui aide les malvoyants à naviguer sur le web et offre des outils pour rendre les sites accessibles aux personnes malvoyantes.</li>
-  <li><a href="https://digital-strategy.ec.europa.eu/fr/policies/web-accessibility" target="_blank" aria-label="Commission Européenne sur l'accessibilité numérique">Commission Européenne - Accessibilité numérique</a> - Informations officielles de l'UE sur les directives et les politiques européennes en matière d'accessibilité numérique.</li>
-  <li><a href="https://accessibilite.numerique.gouv.fr/" target="_blank" aria-label="Référentiel national RGAA (France), directives pour l'accessibilité numérique en France">Référentiel national RGAA (France)</a> - Ressources et directives pour l'accessibilité numérique des sites web en France, gérées par le gouvernement français.</li>
-</ul>
+  <div class="mb-4">
+    <h3 class="mb-3">Les neuf nouveaux critères des WCAG 2.2</h3>
+    <div class="table-responsive" style="border: 1px solid #ddd; border-radius: 5px;">
+      <table class="table compact-table">
+        <thead>
+          <tr>
+            <th scope="col">Critère</th>
+            <th scope="col">Description</th>
+            <th scope="col">Niveau</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>2.4.11</td>
+            <td>Focus non masqué (minimum)</td>
+            <td><span class="level level-aa">AA</span></td>
+          </tr>
+          <tr>
+            <td>2.4.12</td>
+            <td>Focus non masqué (maximum)</td>
+            <td><span class="level level-aaa">AAA</span></td>
+          </tr>
+          <tr>
+            <td>2.4.13</td>
+            <td>Apparence au focus</td>
+            <td><span class="level level-aaa">AAA</span></td>
+          </tr>
+          <tr>
+            <td>2.5.7</td>
+            <td>Mouvements de glissement</td>
+            <td><span class="level level-aa">AA</span></td>
+          </tr>
+          <tr>
+            <td>2.5.8</td>
+            <td>Taille de la police cible (minimum)</td>
+            <td><span class="level level-aa">AA</span></td>
+          </tr>
+          <tr>
+            <td>3.2.6</td>
+            <td>Aide cohérente</td>
+            <td><span class="level level-a">A</span></td>
+          </tr>
+          <tr>
+            <td>3.3.7</td>
+            <td>Identification des erreurs redondante</td>
+            <td><span class="level level-a">A</span></td>
+          </tr>
+          <tr>
+            <td>3.3.8</td>
+            <td>Authentification accessible (minimum)</td>
+            <td><span class="level level-aa">AA</span></td>
+          </tr>
+          <tr>
+            <td>3.3.9</td>
+            <td>Authentification accessible (amélioré)</td>
+            <td><span class="level level-aaa">AAA</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="mt-2" style="text-align: end; font-size: small;"><em>Source : W3C, <a href="https://www.w3.org/TR/WCAG22/" target="_blank">WCAG 2.2 Recommendation</a>, 2023</em></p>
+  </div>
 
-<h2 id="directive-wad" aria-labelledby="directive-wad">La directive européenne sur l'accessibilité du web (WAD)</h2>
-<p>La directive européenne sur l'accessibilité du web vise à garantir que les sites web et les applications mobiles des institutions publiques soient accessibles à tous, y compris aux personnes handicapées. Elle impose des règles strictes sur l'accessibilité et prévoit :</p>
-<ul>
-  <li>Une déclaration d'accessibilité pour chaque site, détaillant le contenu accessible et non accessible.</li>
-  <li>Un mécanisme permettant aux utilisateurs de signaler des problèmes d'accessibilité ou de demander des informations non accessibles.</li>
-  <li>Un suivi régulier des sites web du secteur public pour assurer leur conformité avec les normes d'accessibilité.</li>
-</ul>
+  <p>Les WCAG 2.2 conservent les 4 grands principes fondamentaux : <strong>Perceptible</strong>, <strong>Utilisable</strong>, <strong>Compréhensible</strong> et <strong>Robuste</strong> (POUR), et les 3 niveaux de conformité (A, AA, AAA).</p>
 
-<p>Cette directive est un pas important vers une Europe plus inclusive, où chaque citoyen, indépendamment de ses capacités, peut participer activement à la société numérique. L'UE prévoit également des révisions régulières de cette directive pour garantir son efficacité.</p>
+  <h2 id="eaa" class="mt-5 mb-3" aria-labelledby="eaa">L'European Accessibility Act (EAA)</h2>
 
-<h2 id="pourquoi-accessnum" aria-labelledby="pourquoi-accessnum">Pourquoi AccessNum ?</h2>
-<p>Le site AccessNum a été conçu pour sensibiliser les utilisateurs aux défis rencontrés par les personnes en situation de handicap sur le web. À travers des démonstrations interactives, il vous offre l'opportunité de vivre l'expérience de différents types d'utilisateurs et de comprendre l'importance de rendre les sites et services numériques accessibles.</p>
+  <div class="highlight-box mb-4">
+    <h3>Différence majeure avec la WAD</h3>
+    <p>Contrairement à la directive sur l'accessibilité du web (WAD) qui concerne uniquement le secteur public, l'EAA s'applique également au secteur privé. Les entreprises doivent s'y conformer d'ici juin 2025.</p>
+  </div>
 
-<h2 id="comment-participer" aria-labelledby="comment-participer">Comment participer ?</h2>
-<p>Si vous êtes développeur, designer ou simplement un utilisateur soucieux de l'inclusivité, vous pouvez contribuer à un web plus accessible. Voici quelques actions que vous pouvez entreprendre :</p>
-<ul>
-  <li>Respecter les normes d'accessibilité, telles que les <a href="https://www.w3.org/WAI/WCAG21/quickref/" target="_blank" aria-label="Consulter les WCAG 2.1, les normes d'accessibilité du web">WCAG 2.1</a>, lors de la conception de vos sites et applications.</li>
-  <li>Informer votre entourage ou vos collègues sur l'importance de l'accessibilité numérique.</li>
-  <li>Partager des ressources et bonnes pratiques pour rendre le web plus inclusif.</li>
-</ul>
+  <p>Entré en vigueur en 2019, l'<strong>European Accessibility Act</strong> (Acte Européen d'Accessibilité) vise à harmoniser les exigences d'accessibilité dans l'UE pour les produits et services numériques. <strong>Sa mise en application est prévue pour juin 2025</strong>. <em>(Source : Commission Européenne, Directive 2019/882, mise à jour avril 2024)</em></p>
+
+  <div class="row mb-4">
+    <div class="col-md-6 mb-3">
+      <div class="category-box">
+        <h3>Ce qui est concerné</h3>
+        <ul>
+          <li>Ordinateurs et systèmes d'exploitation</li>
+          <li>Smartphones et tablettes</li>
+          <li>Services bancaires</li>
+          <li>Commerce électronique</li>
+          <li>Livres électroniques</li>
+          <li>Services de transport</li>
+          <li>Téléphonie et services d'urgence</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-md-6 mb-3">
+      <div class="category-box">
+        <h3>Principales exigences</h3>
+        <ul>
+          <li>Information perceptible et compréhensible</li>
+          <li>Compatibilité avec les technologies d'assistance</li>
+          <li>Interfaces utilisateur cohérentes</li>
+          <li>Alternatives aux contenus non textuels</li>
+          <li>Services d'assistance accessibles</li>
+          <li>Documentation accessible aux utilisateurs</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <h2 id="belgique" class="mt-5 mb-3" aria-labelledby="belgique">La situation en Belgique</h2>
+  <p>La Belgique a transposé la directive européenne sur l'accessibilité du web à travers plusieurs textes législatifs :</p>
+
+  <ul class="mb-4">
+    <li>Au niveau fédéral : la loi du 19 juillet 2018</li>
+    <li>En Région flamande : le décret du 12 octobre 2018</li>
+    <li>En Région wallonne : le décret du 2 mai 2019</li>
+    <li>À Bruxelles : l'ordonnance du 4 octobre 2018</li>
+  </ul>
+
+  <p>Ces réglementations exigent que tous les sites web et applications mobiles du secteur public soient accessibles selon les normes WCAG 2.1 niveau AA. L'EAA étendra ces obligations au secteur privé d'ici 2025. <em>(Source : SPF BOSA, Moniteur de l'accessibilité numérique belge, février 2024)</em></p>
+
+  <div class="info-box mb-4">
+    <p><strong>Situation actuelle :</strong> Malgré ces obligations légales, de nombreux sites belges ne sont pas encore conformes. Selon l'étude de janvier 2024, moins de 30% des sites publics belges répondent pleinement aux exigences d'accessibilité. <em>(Source : Anysurfer, Rapport sur l'accessibilité des sites web publics en Belgique, janvier 2024)</em></p>
+  </div>
+
+  <h2 id="ressources" class="mt-5 mb-3" aria-labelledby="ressources">Ressources utiles</h2>
+  <div class="row mb-4">
+    <div class="col-md-6 mb-3">
+      <div class="resource-box">
+        <h3>Ressources belges</h3>
+        <ul class="resource-list">
+          <li><a href="https://bosa.belgium.be/fr/themes/administration-numerique/inspiration-et-lignes-directrices/inclusion-numerique-et" target="_blank">
+            <i class="fas fa-external-link-alt" aria-hidden="true"></i> <strong>SPF BOSA</strong> - Administration numérique et accessibilité
+          </a></li>
+          <li><a href="https://www.anysurfer.be" target="_blank">
+            <i class="fas fa-external-link-alt" aria-hidden="true"></i> <strong>AnySurfer</strong> - Expertise en accessibilité numérique
+          </a></li>
+          <li><a href="https://www.elevenways.be/fr" target="_blank">
+            <i class="fas fa-external-link-alt" aria-hidden="true"></i> <strong>ElevenWays</strong> - Expertise en accessibilité numérique
+          </a></li>
+          <li><a href="https://www.eqla.be" target="_blank">
+            <i class="fas fa-external-link-alt" aria-hidden="true"></i> <strong>Eqla</strong> - Association pour les personnes déficientes visuelles
+          </a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-md-6 mb-3">
+      <div class="resource-box">
+        <h3>Ressources internationales</h3>
+        <ul class="resource-list">
+          <li><a href="https://www.w3.org/WAI/standards-guidelines/wcag/" target="_blank">
+            <i class="fas fa-external-link-alt" aria-hidden="true"></i> <strong>WCAG 2.2</strong> - Web Content Accessibility Guidelines
+          </a></li>
+          <li><a href="https://commission.europa.eu/strategy-and-policy/policies/justice-and-fundamental-rights/disability/union-equality-strategy-rights-persons-disabilities-2021-2030/european-accessibility-act_en" target="_blank">
+            <i class="fas fa-external-link-alt" aria-hidden="true"></i> <strong>Commission européenne</strong> - European Accessibility Act
+          </a></li>
+          <li><a href="https://www.w3.org/WAI/fundamentals/accessibility-intro/fr" target="_blank">
+            <i class="fas fa-external-link-alt" aria-hidden="true"></i> <strong>W3C WAI</strong> - Introduction à l'accessibilité web
+          </a></li>
+          <li><a href="https://accessibilite.numerique.gouv.fr/" target="_blank">
+            <i class="fas fa-external-link-alt" aria-hidden="true"></i> <strong>RGAA</strong> - Référentiel général d’amélioration de l’accessibilité (France)
+          </a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <h2 id="participer" class="mt-5 mb-3" aria-labelledby="participer">Comment participer ?</h2>
+  <p>Si vous êtes développeur, designer ou simplement un utilisateur soucieux de l'inclusivité, vous pouvez contribuer à un web plus accessible. Voici quelques actions que vous pouvez entreprendre :</p>
+  <ul>
+    <li>Respecter les normes d'accessibilité, telles que les <a href="https://www.w3.org/WAI/WCAG21/quickref/" target="_blank">WCAG 2.2</a>, lors de la conception de vos sites et applications.</li>
+    <li>Informer votre entourage ou vos collègues sur l'importance de l'accessibilité numérique.</li>
+    <li>Partager des ressources et bonnes pratiques pour rendre le web plus inclusif.</li>
+    <li>Tester vos sites avec des outils d'évaluation d'accessibilité comme <a href="https://wave.webaim.org/" target="_blank">WAVE</a> ou <a href="https://www.deque.com/axe/" target="_blank">Axe</a>.</li>
+    <li>Écouter et impliquer les personnes en situation de handicap dans vos processus de conception et de test.</li>
+  </ul>
+</div>
 
 <style>
+  body {
+    color: #333;
+    line-height: 1.6;
+  }
+
+  h1, h2, h3 {
+    color: #444;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  h2 {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.5rem;
+  }
+
   a {
-    color:#97375d !important;
+    color: #97375d !important;
     text-decoration: none !important;
   }
-  a:hover, footer a:focus {
+
+  a:hover, a:focus {
     text-decoration: underline !important;
+  }
+
+  /* Boîtes d'information */
+  .info-box {
+    background-color: #f8f9fa;
+    border-left: 4px solid #FF8C00;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+  }
+
+  .info-box p {
+    margin-bottom: 0;
+  }
+
+  /* Boîte de mise en évidence pour la différence EAA/WAD */
+  .highlight-box {
+    background-color:rgb(250, 234, 210);
+    border: 1px solid #ffaa2e;
+    color: #003366;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+
+  .highlight-box h3 {
+    color: #ffaa2e;
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+    border-bottom: 1px solid #ffaa2e;
+    padding-bottom: 8px;
+  }
+
+  .highlight-box p {
+    margin-bottom: 0;
+    font-weight: 500;
+  }
+
+  /* Boîtes de catégorie */
+  .category-box {
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 15px;
+    height: 100%;
+  }
+
+  .category-box h3 {
+    color: #333;
+    font-size: 0.93rem;
+    margin-top: 0;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 8px;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+
+  .category-box ul {
+    padding-left: 20px;
+    margin-bottom: 0;
+  }
+
+  /* Ressources */
+  .resource-box {
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 15px;
+    height: 100%;
+  }
+
+  .resource-box h3 {
+    color: #333;
+    font-size: 1.2rem;
+    margin-top: 0;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 8px;
+    margin-bottom: 15px;
+  }
+
+  .resource-list {
+    list-style: none;
+    padding-left: 0;
+  }
+
+  .resource-list li {
+    margin-bottom: 10px;
+  }
+
+  .resource-list a {
+    display: inline-block;
+    padding: 5px 0;
+  }
+
+  .resource-list i {
+    margin-right: 5px;
+    color: #666;
+  }
+
+  /* Tableau */
+  .table {
+    font-size: 0.95rem;
+    margin-bottom: 0px !important;
+  }
+
+  .table th {
+    background-color: #f2f2f2;
+    color: #333;
+  }
+
+  /* Style pour le tableau compact des critères WCAG 2.2 */
+  .compact-table {
+    font-size: 0.9rem;
+    width: 100%;
+  }
+
+  .compact-table th {
+    background-color: #f2f2f2;
+    padding: 8px 10px;
+    font-weight: 600;
+  }
+
+  .compact-table td {
+    padding: 6px 10px;
+    vertical-align: middle;
+  }
+
+  .compact-table tr:nth-child(even) {
+    background-color: #f8f9fa;
+  }
+
+  .compact-table th:first-child,
+  .compact-table td:first-child {
+    width: 15%;
+    text-align: center;
+  }
+
+  .compact-table th:last-child,
+  .compact-table td:last-child {
+    width: 15%;
+    text-align: center;
+  }
+
+  /* Affichage des indicateurs de niveau avec différentes couleurs */
+  .level {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: bold;
+    text-align: center;
+    min-width: 32px;
+  }
+
+  .level-a {
+    background-color: #d4edda;
+    color: #155724;
+  }
+
+  .level-aa {
+    background-color: #e6f0ff;
+    color: #0066cc;
+  }
+
+  .level-aaa {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+
+  /* Responsive */
+  @media (max-width: 767px) {
+    .category-box, .resource-box {
+      margin-bottom: 15px;
+    }
+  }
+
+  /* Pour les écrans très petits */
+  @media (max-width: 576px) {
+    .compact-table {
+      font-size: 0.85rem;
+    }
+
+    .compact-table th,
+    .compact-table td {
+      padding: 5px 6px;
+    }
   }
 </style>

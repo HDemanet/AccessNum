@@ -1,14 +1,16 @@
 <% content_for :title, "Simulateur - Expérimentez les défis numériques en vous mettant dans la peau de différents utilisateurs" %>
-<% content_for :meta_description, "Testez l'accessibilité d'un site web en simulant différentes situations de handicap : daltonisme, DMLA, surdité, troubles cognitifs et plus encore." %>
+<% content_for :meta_description, "Testez l'accessibilité d'un site web en simulant différentes situations de handicap : daltonisme, DMLA, surdité, troubles cognitifs et plus encore. Conforme aux WCAG 2.2 et à l'European Accessibility Act." %>
 
 <div data-controller="simulate" class="container mt-4">
   <h1 class="text-center" id="simulate-title">Simulateur de particularités</h1>
 
   <% if params[:url].present? %>
-    <p class="text-center text-muted" aria-live="polite">
-      Comme une démonstration vaut souvent mieux que mille mots, AccessNum permet de simuler différents types de handicap afin de comprendre comment un site est perçu par différents utilisateurs, et ainsi pourquoi il est essentiel de respecter les normes d'accessibilité.
-    </p>
-    <p>À vous de jouer ! Sélectionnez une particularité.</p>
+    <div aria-live="polite" class="description-container">
+      <p class="text-center">
+        Comme une démonstration vaut souvent mieux que mille mots, AccessNum permet de simuler différents types de handicap afin de comprendre comment un site est perçu par différents utilisateurs, et ainsi pourquoi il est essentiel de respecter les normes d'accessibilité.
+      </p>
+      <p class="text-center"><strong>À vous de jouer ! Sélectionnez une particularité.</strong></p>
+    </div>
 
     <!-- SVG Filters pour le daltonisme -->
     <svg style="display: none;">
@@ -25,36 +27,36 @@
       </defs>
     </svg>
 
-    <div class="row mt-4">
-      <div class="col-12 text-center mb-3">
-        <div class="btn-group d-flex flex-wrap justify-content-center" role="group" aria-label="Simulations d'accessibilité">
-          <button data-action="click->simulate#toggle" data-type="daltonisme" class="btn btn-outline m-2 rounded" aria-pressed="false" aria-label="Simuler le daltonisme">
+    <div class="my-4">
+      <nav aria-label="Simulations d'accessibilité" class="simulation-nav">
+        <div class="btn-group d-flex flex-wrap justify-content-center" role="group" aria-label="Boutons de simulation">
+          <button data-action="click->simulate#toggle" data-type="daltonisme" class="btn btn-outline m-2" id="btn-daltonisme" aria-selected="false" aria-controls="simulation-content" aria-label="Simuler le daltonisme" tabindex="0" style="border-radius: 5px;">
             <i class="fas fa-palette" aria-hidden="true"></i> Daltonisme
           </button>
-          <button data-action="click->simulate#toggle" data-type="dmla" class="btn btn-outline m-2 rounded" aria-pressed="false" aria-label="Simuler la DMLA">
+          <button style="border-radius: 5px;" data-action="click->simulate#toggle" data-type="dmla" class="btn btn-outline m-2" id="btn-dmla" aria-selected="false" aria-controls="simulation-content" aria-label="Simuler la DMLA" tabindex="0">
             <i class="fas fa-low-vision" aria-hidden="true"></i> DMLA
           </button>
-          <button data-action="click->simulate#toggle" data-type="cataracte" class="btn btn-outline m-2 rounded" aria-pressed="false" aria-label="Simuler la cataracte">
+          <button style="border-radius: 5px;" data-action="click->simulate#toggle" data-type="cataracte" class="btn btn-outline m-2" id="btn-cataracte" aria-selected="false" aria-controls="simulation-content" aria-label="Simuler la cataracte" tabindex="0">
             <i class="fas fa-glasses" aria-hidden="true"></i> Cataracte
           </button>
-          <button data-action="click->simulate#toggle" data-type="cecite" class="btn btn-outline m-2 rounded" aria-pressed="false" aria-label="Simuler la cécité">
+          <button style="border-radius: 5px;" data-action="click->simulate#toggle" data-type="cecite" class="btn btn-outline m-2" id="btn-cecite" aria-selected="false" aria-controls="simulation-content" aria-label="Simuler la cécité" tabindex="0">
             <i class="fas fa-eye-slash" aria-hidden="true"></i> Cécité
           </button>
-          <button data-action="click->simulate#toggle" data-type="surdite" class="btn btn-outline m-2 rounded" aria-pressed="false" aria-label="Simuler la surdité">
+          <button style="border-radius: 5px;" data-action="click->simulate#toggle" data-type="surdite" class="btn btn-outline m-2" id="btn-surdite" aria-selected="false" aria-controls="simulation-content" aria-label="Simuler la surdité" tabindex="0">
             <i class="fas fa-ear-deaf" aria-hidden="true"></i> Surdité
           </button>
-          <button data-action="click->simulate#toggle" data-type="moteur" class="btn btn-outline m-2 rounded" aria-pressed="false" aria-label="Simuler un handicap moteur">
+          <button style="border-radius: 5px;" data-action="click->simulate#toggle" data-type="moteur" class="btn btn-outline m-2" id="btn-moteur" aria-selected="false" aria-controls="simulation-content" aria-label="Simuler un handicap moteur" tabindex="0">
             <i class="fas fa-wheelchair" aria-hidden="true"></i> Handicap moteur
           </button>
-          <button data-action="click->simulate#toggle" data-type="cognitif" class="btn btn-outline m-2 rounded" aria-pressed="false" aria-label="Simuler un handicap cognitif">
+          <button style="border-radius: 5px;" data-action="click->simulate#toggle" data-type="cognitif" class="btn btn-outline m-2" id="btn-cognitif" aria-selected="false" aria-controls="simulation-content" aria-label="Simuler un handicap cognitif" tabindex="0">
             <i class="fas fa-brain" aria-hidden="true"></i> Handicap cognitif
           </button>
         </div>
-      </div>
+      </nav>
     </div>
 
-    <div class="row mt-4">
-      <div class="col-md-7 position-relative">
+    <div class="row mt-4" id="simulation-content" role="region" aria-live="polite" tabindex="0">
+      <div class="col-lg-7 col-md-12 position-relative">
         <div data-simulate-target="overlayContainer" class="overlay-container">
           <iframe data-simulate-target="iframe" id="preview"
                   class="w-100 border rounded shadow"
@@ -70,14 +72,14 @@
         </p>
       </div>
 
-      <div class="col-md-5 position-relative">
-        <div class="p-3 border rounded bg-light">
-          <h2 data-simulate-target="title" class="text">Sélectionnez une simulation</h2>
-          <p data-simulate-target="description" class="text-muted">
+      <div class="col-lg-5 col-md-12 position-relative">
+        <div class="p-3 border rounded bg-light h-100">
+          <h2 data-simulate-target="title" class="h4">Sélectionnez une simulation</h2>
+          <p data-simulate-target="description" class="mb-3">
             Cliquez sur un bouton pour voir les effets.
           </p>
           <div data-simulate-target="recommendations" class="recommendations mt-3 d-none" aria-live="polite">
-            <h3>Recommandations WCAG</h3>
+            <h3 class="h5">Recommandations d'accessibilité</h3>
             <ul class="list-unstyled">
             </ul>
           </div>
@@ -86,22 +88,27 @@
     </div>
   <% end %>
 
-  <%= form_tag simulate_path, { method: :get, class: "mt-4", role: "form", aria: { labelledby: "simulate-title", describedby: "urlHelp" } } do %>
-    <div class="input-group d-flex align-items-center gap-2" style="margin-bottom: 15px;">
-      <label for="url" class="visually-hidden">URL du site web</label>
-      <%= text_field_tag :url, params[:url], class: "form-control custom-placeholder", autocomplete: "url", aria: { describedby: "urlHelp" } %>
-      <button class="btn custom-btn" type="submit" aria-label="Lancer la simulation">Simuler</button>
+  <%= form_tag simulate_path, { method: :get, class: "mt-4 url-form", id: "simulation-form", role: "form", aria: { labelledby: "simulate-title" } } do %>
+    <div class="form-group">
+      <label for="url" class="form-label">Entrer une URL pour visualiser comment un site web est perçu.</label>
+      <div class="d-flex flex-wrap align-items-start gap-2">
+        <%= text_field_tag :url, params[:url], class: "form-control flex-grow-1", placeholder: "https://www.exemple.com", autocomplete: "url",
+        aria: { describedby: "urlHelp" } %>
+        <button class="btn custom-btn" type="submit" aria-label="Lancer la simulation">Simuler</button>
+      </div>
     </div>
 
     <!-- Texte explicatif pour l'URL complète -->
-    <small id="urlHelp" class="form-text text-x" aria-live="polite">
-      <i class="fas fa-info-circle"></i> Note :
-      AccessNum n'est pas un moteur de recherche.
-      Veuillez entrer l'adresse URL complète du site, par exemple:
-      <code>https://www.rtbf.be/</code> et non seulement <code>rtbf.be</code>.
-    </small>
-    <p id="urlHelp" class="form-text text-x">
-      La visualisation de certains sites pourrait ne pas être possible. Dans ce cas, nous vous invitons à essayer par exemple le site de votre bibliothèque locale, d'une association...
-    </p>
+    <div class="url-help mt-3">
+      <small id="urlHelp" class="form-text text-x" aria-live="polite">
+        <i class="fas fa-info-circle" aria-hidden="true"></i> Note :
+        AccessNum n'est pas un moteur de recherche.
+        Veuillez entrer l'adresse URL complète du site, par exemple:
+        <code>https://www.rtbf.be/</code> et non seulement <code>rtbf.be</code>.
+      </small>
+      <p class="form-text text-x">
+        La visualisation de certains sites pourrait ne pas être possible. Dans ce cas, nous vous invitons à essayer par exemple le site de votre bibliothèque locale, d'une association...
+      </p>
+    </div>
   <% end %>
 </div>
