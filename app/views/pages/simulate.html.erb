@@ -111,4 +111,198 @@
       </p>
     </div>
   <% end %>
+
+  <!-- Guide d'utilisation en bas de page -->
+    <div class="usage-guide mt-5 mb-4" data-controller="accordion">
+    <button class="guide-toggle-btn" id="guide-toggle" data-action="click->accordion#toggle" data-accordion-target="button" aria-expanded="false" aria-controls="usage-guide-content">
+      <h2 class="guide-title mb-0">
+        Comment utiliser ce simulateur ?
+        <i class="fas fa-chevron-down toggle-icon" aria-hidden="true"></i>
+      </h2>
+    </button>
+
+    <div id="usage-guide-content" class="guide-content collapsed" data-accordion-target="content">
+      <div class="guide-intro mb-3 mt-3">
+        <p>Ce simulateur vous permet d'expérimenter les défis rencontrés par différents utilisateurs lors de la navigation web, afin de mieux comprendre l'importance de l'accessibilité numérique.</p>
+      </div>
+
+      <div class="usage-sections">
+        <div class="row">
+          <div class="col-md-6 mb-4">
+            <div class="usage-section">
+              <h3><i class="fas fa-desktop me-2"></i>Sur ordinateur</h3>
+              <ol>
+                <li><strong>Entrez une URL</strong> complète et cliquez sur "Simuler"</li>
+                <li><strong>Choisissez une particularité</strong> à simuler</li>
+                <li><strong>Observez les effets</strong> dans la zone de prévisualisation</li>
+                <li><strong>Consultez les recommandations</strong> d'accessibilité</li>
+              </ol>
+              <p class="tip">Pour désactiver une simulation, cliquez à nouveau sur le même bouton ou appuyez sur la touche Echap.</p>
+            </div>
+          </div>
+          <div class="col-md-6 mb-4">
+            <div class="usage-section">
+              <h3><i class="fas fa-mobile-alt me-2"></i>Sur mobile ou tablette</h3>
+              <ol>
+                <li><strong>Saisissez l'URL</strong> complète et touchez "Simuler"</li>
+                <li><strong>Activez une simulation</strong> en touchant un bouton</li>
+                <li><strong>Interagissez</strong> avec la prévisualisation</li>
+                <li><strong>Touchez à nouveau le même bouton</strong> pour désactiver</li>
+              </ol>
+              <p class="tip">Certaines simulations (daltonisme, cécité, surdité) peuvent nécessiter l'activation de fonctionnalités spécifiques sur votre appareil.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="usage-details mt-3">
+        <h3>Détails des simulations</h3>
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <div class="simulation-detail">
+              <h4>Vision</h4>
+              <ul>
+                <li><strong>Daltonisme :</strong> perception différente des couleurs</li>
+                <li><strong>DMLA :</strong> vision centrale réduite</li>
+                <li><strong>Cataracte :</strong> vision floue et contrastes réduits</li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-4 mb-3">
+            <div class="simulation-detail">
+              <h4>Autres sens</h4>
+              <ul>
+                <li><strong>Cécité :</strong> utilisation d'un lecteur d'écran</li>
+                <li><strong>Surdité :</strong> simulation d'acouphènes</li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-4 mb-3">
+            <div class="simulation-detail">
+              <h4>Interactions</h4>
+              <ul>
+                <li><strong>Handicap moteur :</strong> mouvements imprécis</li>
+                <li><strong>Handicap cognitif :</strong> distractions et perturbations</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="important-note mt-4">
+        <p style="margin-bottom: 0;"><i class="fas fa-info-circle me-2"></i><strong>Important :</strong> Ces simulations sont des approximations pédagogiques et ne représentent pas parfaitement l'expérience de chaque personne. Elles permettent de sensibiliser aux enjeux de l'accessibilité numérique.</p>
+      </div>
+    </div>
+  </div>
 </div>
+
+<style>
+  .usage-guide {
+    max-width: 900px;
+    margin: 3rem auto 2rem;
+    color: #333;
+  }
+
+  .guide-toggle-btn {
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .guide-toggle-btn:hover .guide-title {
+    color: #ffaa2e;
+  }
+
+  .guide-title {
+    width: 100%;
+    margin-bottom: 1rem;
+    font-size: 1.6rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: color 0.3s ease;
+  }
+
+  .toggle-icon {
+    font-size: 1.2rem;
+    transition: transform 0.3s ease;
+  }
+
+  .guide-toggle-btn[aria-expanded="true"] .toggle-icon {
+    transform: rotate(180deg);
+  }
+
+  .guide-content {
+    overflow: hidden;
+    transition: max-height 0.5s ease;
+    max-height: 2000px;
+  }
+
+  .guide-content.collapsed {
+    max-height: 0;
+  }
+
+  .guide-intro {
+    margin: 0 auto;
+  }
+
+  .usage-section, .simulation-detail {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 1.2rem;
+    height: 100%;
+    border-left: 4px solid #ffaa2e;
+  }
+
+  .usage-section h3, .simulation-detail h4 {
+    font-size: 1.2rem;
+    text-align: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .usage-section ol, .simulation-detail ul {
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .usage-section li, .simulation-detail li {
+    margin-bottom: 0.5rem;
+  }
+
+  .tip {
+    font-style: italic;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .important-note {
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    text-align: center;
+    border: 1px solid #eee;
+  }
+
+  .usage-details h3 {
+    text-align: center;
+    margin-bottom: 1.2rem;
+    color: #444;
+    font-size: 1.4rem;
+  }
+
+  @media (max-width: 767px) {
+    .usage-section, .simulation-detail {
+      margin-bottom: 1rem;
+    }
+  }
+</style>

@@ -173,17 +173,35 @@ export default class extends Controller {
     }
   }
 
+  // Modifier la fonction simulateDaltonisme pour utiliser des filtres CSS au lieu de SVG sur mobile
   simulateDaltonisme(iframe) {
     const types = [
-      { name: 'protanopia', label: 'protanopie (difficulté avec le rouge)' },
-      { name: 'deuteranopia', label: 'deutéranopie (difficulté avec le vert)' },
-      { name: 'tritanopia', label: 'tritanopie (difficulté avec le bleu)' }
+      {
+        name: 'protanopia',
+        label: 'protanopie (difficulté avec le rouge)',
+        cssFilter: 'grayscale(0) sepia(0) saturate(1.4) hue-rotate(350deg) brightness(0.88) contrast(0.92)'
+      },
+      {
+        name: 'deuteranopia',
+        label: 'deutéranopie (difficulté avec le vert)',
+        cssFilter: 'grayscale(0) sepia(0) saturate(1.1) hue-rotate(205deg) brightness(0.92) contrast(1)'
+      },
+      {
+        name: 'tritanopia',
+        label: 'tritanopie (difficulté avec le bleu)',
+        cssFilter: 'grayscale(0) sepia(0.2) saturate(0.8) hue-rotate(175deg) brightness(1.1) contrast(1.1)'
+      }
     ];
 
     this.currentDaltonismIndexValue = (this.currentDaltonismIndexValue + 1) % types.length;
     const currentType = types[this.currentDaltonismIndexValue];
 
-    iframe.style.filter = `url('#${currentType.name}')`;
+    // Utiliser des filtres CSS sur mobile et SVG sur desktop
+    if (this.isTouchDevice) {
+      iframe.style.filter = currentType.cssFilter;
+    } else {
+      iframe.style.filter = `url('#${currentType.name}')`;
+    }
 
     this.updateInfo(
       `Daltonisme - ${currentType.name}`,
@@ -302,27 +320,8 @@ export default class extends Controller {
     }
   }
 
+  // Amélioration de la simulation de surdité pour les appareils mobiles
   simulateSurdite(iframe) {
-    if (!this.audioContext) {
-      try {
-        this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      } catch (e) {
-        console.error("Impossible d'initialiser l'AudioContext:", e);
-        // Fallback pour les appareils ne supportant pas Web Audio API
-        this.updateInfo(
-          "Surdité et acouphènes",
-          "Simulation d'acouphènes non disponible sur votre appareil. Les personnes malentendantes peuvent percevoir un sifflement constant.",
-          [
-            "Fournir des sous-titres pour tous les contenus audio (WCAG 2.2 - 1.2.2)",
-            "Proposer des transcriptions textuelles (WCAG 2.2 - 1.2.1)",
-            "Éviter les contenus qui ne fonctionnent qu'avec du son (EAA)",
-            "S'assurer que les médias temporels sont clairement identifiés (WCAG 2.2 - 1.4.2)"
-          ]
-        );
-        return;
-      }
-    }
-
     // Créer l'overlay avec le bouton centré
     let overlay = document.createElement('div');
     overlay.id = 'hearing-overlay';
@@ -347,35 +346,105 @@ export default class extends Controller {
 
     iframe.parentElement.appendChild(overlay);
 
+    // Ajouter des informations sur les contraintes mobiles si nécessaire
+    if (this.isTouchDevice) {
+      const mobileNote = document.createElement('div');
+      mobileNote.style.color = 'white';
+      mobileNote.style.fontSize = '12px';
+      mobileNote.style.marginTop = '5px';
+      mobileNote.style.textAlign = 'center';
+      mobileNote.style.padding = '0 10px';
+      mobileNote.innerHTML = '<i class="fas fa-info-circle"></i> Sur mobile : touchez pour activer le son.';
+      overlay.appendChild(mobileNote);
+    }
+
     let isPlaying = false;
+
+    // Son prédéfini pour les acouphènes (alternative aux oscillateurs pour meilleure compatibilité)
+    let audioElement = null;
+
     tinnitusButton.addEventListener('click', () => {
       if (isPlaying) {
-        if (this.oscillator) {
-          this.oscillator.stop();
-          this.oscillator = null;
+        if (audioElement) {
+          audioElement.pause();
+          audioElement.currentTime = 0;
+        } else if (this.oscillator) {
+          try {
+            this.oscillator.stop();
+            this.oscillator = null;
+          } catch(e) {
+            console.log("Erreur lors de l'arrêt de l'oscillateur:", e);
+          }
         }
+
         tinnitusButton.innerHTML = '<i class="fas fa-play" aria-hidden="true"></i> <span>Démarrer l\'acouphène</span>';
         tinnitusButton.classList.remove('btn-info');
         tinnitusButton.classList.add('btn-warning');
         isPlaying = false;
       } else {
-        try {
-          // Redémarre l'AudioContext si suspendu (pour les navigateurs mobiles)
-          if (this.audioContext.state === 'suspended') {
-            this.audioContext.resume();
+        // Approche 1: Utiliser un élément audio pour les appareils mobiles (plus fiable)
+        if (this.isTouchDevice) {
+          if (!audioElement) {
+            audioElement = document.createElement('audio');
+            audioElement.id = 'tinnitus-audio';
+
+            // Utiliser une source alternative pour les acouphènes via un fichier audio en ligne ou base64
+            // Note: Il faudrait héberger ce fichier sur votre serveur en production
+            audioElement.src = 'https://example.com/tinnitus-sound.mp3';
+
+            // Solution alternative : utiliser un signal audio encodé en base64
+            // Cette ligne est un exemple, vous auriez besoin de créer ou d'obtenir ce son encodé
+            audioElement.src = 'data:audio/mp3;base64,SUQzAwAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tAwAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAADmAD///////////////////////////////////////////8AAAA...';
+
+            audioElement.loop = true;
+            audioElement.volume = 0.3;
+            document.body.appendChild(audioElement);
           }
 
-          this.oscillator = this.audioContext.createOscillator();
-          this.oscillator.type = 'sine';
-          this.oscillator.frequency.setValueAtTime(4000, this.audioContext.currentTime);
+          audioElement.play()
+            .then(() => {
+              console.log("Lecture audio démarrée avec succès");
+            })
+            .catch(e => {
+              console.error("Erreur de lecture audio:", e);
+              tinnitusButton.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Touchez à nouveau';
+              setTimeout(() => {
+                tinnitusButton.innerHTML = '<i class="fas fa-play" aria-hidden="true"></i> <span>Démarrer l\'acouphène</span>';
+              }, 2000);
+              return;
+            });
+        }
+        // Approche 2: Oscillateur pour desktop
+        else if (!this.audioContext) {
+          try {
+            this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+          } catch (e) {
+            console.error("Impossible d'initialiser l'AudioContext:", e);
+            tinnitusButton.innerHTML = "Audio non supporté";
+            tinnitusButton.disabled = true;
+            return;
+          }
+        }
 
-          // Ajoute un gain node pour contrôler le volume
-          const gainNode = this.audioContext.createGain();
-          gainNode.gain.value = 0.3; // Réduit le volume pour éviter les chocs
+        // Si nous sommes sur desktop ou si l'audio a démarré sur mobile
+        try {
+          if (!this.isTouchDevice && this.audioContext) {
+            // Méthode original de l'oscillateur pour desktop
+            if (this.audioContext.state === 'suspended') {
+              this.audioContext.resume();
+            }
 
-          this.oscillator.connect(gainNode);
-          gainNode.connect(this.audioContext.destination);
-          this.oscillator.start();
+            this.oscillator = this.audioContext.createOscillator();
+            this.oscillator.type = 'sine';
+            this.oscillator.frequency.setValueAtTime(4000, this.audioContext.currentTime);
+
+            const gainNode = this.audioContext.createGain();
+            gainNode.gain.value = 0.3;
+
+            this.oscillator.connect(gainNode);
+            gainNode.connect(this.audioContext.destination);
+            this.oscillator.start();
+          }
 
           tinnitusButton.innerHTML = '<i class="fas fa-pause" aria-hidden="true"></i> <span>Arrêter l\'acouphène</span>';
           tinnitusButton.classList.add('btn-info');
@@ -401,15 +470,109 @@ export default class extends Controller {
     );
   }
 
-  simulateMotorImpairment() {
-    this.cursorTarget.classList.add('trembling');
-    const iframe = this.iframeTarget;
-    iframe.style.pointerEvents = "none";
+  // Modification de resetFilter pour nettoyer l'audio
+  resetFilter() {
+    // Code existant...
 
-    // Adaptation mobile : rendre le curseur plus grand sur les appareils tactiles
+    // Nettoyer les éléments audio
+    const audioElement = document.getElementById('tinnitus-audio');
+    if (audioElement) {
+      audioElement.pause();
+      audioElement.remove();
+    }
+
+    // Reste du code existant...
+  }
+
+  // Amélioration de la simulation du handicap moteur pour mobile
+  simulateMotorImpairment() {
+    const iframe = this.iframeTarget;
+
+    // Pour les appareils tactiles (mobiles)
     if (this.isTouchDevice) {
-      this.cursorTarget.style.width = "30px";
-      this.cursorTarget.style.height = "30px";
+      // Ajouter un overlay pour simuler la "difficulté d'interaction"
+      const overlay = document.createElement('div');
+      overlay.className = 'simulation-overlay motor-overlay';
+      overlay.setAttribute('aria-hidden', 'true');
+      overlay.style.position = 'absolute';
+      overlay.style.top = '0';
+      overlay.style.left = '0';
+      overlay.style.width = '100%';
+      overlay.style.height = '100%';
+      overlay.style.backgroundColor = 'transparent';
+      overlay.style.zIndex = '9999';
+
+      // Faire trembler l'iframe plutôt que juste le curseur
+      iframe.style.animation = 'shake 0.5s infinite';
+
+      // Ajouter une animation de tremblement au style
+      const style = document.createElement('style');
+      style.id = 'motor-impairment-style';
+      style.textContent = `
+        @keyframes shake {
+          0% { transform: translate(0, 0) rotate(0deg); }
+          25% { transform: translate(-2px, 1px) rotate(-0.5deg); }
+          50% { transform: translate(1px, 2px) rotate(0.5deg); }
+          75% { transform: translate(-1px, -1px) rotate(-0.5deg); }
+          100% { transform: translate(2px, 0) rotate(0deg); }
+        }
+
+        /* Style pour indiquer les zones d'interaction difficiles */
+        .touch-area {
+          position: absolute;
+          background-color: rgba(255, 0, 0, 0.2);
+          border: 2px solid rgba(255, 0, 0, 0.4);
+          border-radius: 50%;
+          pointer-events: none;
+          z-index: 10000;
+          animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+          0% { transform: scale(1); opacity: 0.7; }
+          50% { transform: scale(1.2); opacity: 0.4; }
+          100% { transform: scale(1); opacity: 0.7; }
+        }
+      `;
+      document.head.appendChild(style);
+
+      // Ajouter un message d'explication spécifique au mobile
+      const mobileInstruction = document.createElement('div');
+      mobileInstruction.style.position = 'absolute';
+      mobileInstruction.style.bottom = '10px';
+      mobileInstruction.style.left = '50%';
+      mobileInstruction.style.transform = 'translateX(-50%)';
+      mobileInstruction.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+      mobileInstruction.style.color = 'white';
+      mobileInstruction.style.padding = '10px';
+      mobileInstruction.style.borderRadius = '5px';
+      mobileInstruction.style.zIndex = '10001';
+      mobileInstruction.style.textAlign = 'center';
+      mobileInstruction.style.maxWidth = '90%';
+      mobileInstruction.textContent = 'Essayez d\'interagir avec l\'écran. Les touches sont difficiles à atteindre et l\'écran tremble.';
+      overlay.appendChild(mobileInstruction);
+
+      // Ajouter des zones d'interaction "difficiles" qui suivent le doigt avec délai
+      overlay.addEventListener('touchstart', (e) => {
+        const touch = e.touches[0];
+        this.createTouchArea(touch.clientX, touch.clientY, overlay);
+      });
+
+      overlay.addEventListener('touchmove', (e) => {
+        if (e.touches.length > 0) {
+          const touch = e.touches[0];
+          setTimeout(() => {
+            this.createTouchArea(touch.clientX, touch.clientY, overlay);
+          }, 300); // Délai de suivi
+        }
+      });
+
+      this.overlayContainerTarget.appendChild(overlay);
+    } else {
+      // Comportement existant pour desktop avec curseur qui tremble
+      this.cursorTarget.classList.remove('d-none');
+      this.cursorTarget.classList.add('trembling');
+      iframe.style.pointerEvents = "none";
     }
 
     this.updateInfo(
@@ -424,6 +587,23 @@ export default class extends Controller {
         "Implémenter des délais suffisants (WCAG 2.2 - 2.2.1, 2.2.6 nouveau critère)"
       ]
     );
+  }
+
+  // Nouvelle méthode pour créer des zones tactiles "difficiles"
+  createTouchArea(x, y, parent) {
+    const touchArea = document.createElement('div');
+    touchArea.className = 'touch-area';
+    touchArea.style.width = '40px';
+    touchArea.style.height = '40px';
+    touchArea.style.left = (x - 20) + 'px';
+    touchArea.style.top = (y - 20) + 'px';
+
+    parent.appendChild(touchArea);
+
+    // Supprimer après animation
+    setTimeout(() => {
+      touchArea.remove();
+    }, 1500);
   }
 
   simulateCognitiveImpairment(iframe) {
@@ -456,48 +636,52 @@ export default class extends Controller {
     );
   }
 
-  simulateMobileDistractions() {
-    // Crée des "notifications" perturbantes pour simuler les distractions sur mobile
-    const distract = () => {
-      const notification = document.createElement('div');
-      notification.style.position = 'fixed';
-      notification.style.top = '10px';
-      notification.style.right = '10px';
-      notification.style.padding = '10px';
-      notification.style.backgroundColor = 'rgba(0,0,0,0.8)';
-      notification.style.color = 'white';
-      notification.style.borderRadius = '5px';
-      notification.style.zIndex = '10000';
+  // Dans la fonction simulateMobileDistractions()
+simulateMobileDistractions() {
+  // Crée des "notifications" perturbantes pour simuler les distractions sur mobile
+  const distract = () => {
+    const notification = document.createElement('div');
+    notification.style.position = 'fixed';
+    notification.style.top = '10px';
+    notification.style.right = '10px';
+    notification.style.padding = '10px';
+    notification.style.backgroundColor = 'rgba(0,0,0,0.8)';
+    notification.style.color = 'white';
+    notification.style.borderRadius = '5px';
+    notification.style.zIndex = '100000'; // Z-index beaucoup plus élevé
+    notification.style.opacity = '0';
+    notification.style.transition = 'opacity 0.3s ease-in-out';
+    notification.style.fontSize = '16px'; // Taille de police explicite
+    notification.textContent = 'Nouvelle notification!';
+    notification.style.boxShadow = '0 0 10px rgba(255,255,255,0.5)'; // Ajout d'une ombre pour attirer l'attention
+
+    // Ajouter directement au body pour éviter les problèmes de z-index
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+      notification.style.opacity = '1';
+    }, 100);
+
+    setTimeout(() => {
       notification.style.opacity = '0';
-      notification.style.transition = 'opacity 0.3s ease-in-out';
-      notification.textContent = 'Nouvelle notification!';
-
-      document.body.appendChild(notification);
-
       setTimeout(() => {
-        notification.style.opacity = '1';
-      }, 100);
+        notification.remove();
+      }, 300);
+    }, 2000);
+  };
 
-      setTimeout(() => {
-        notification.style.opacity = '0';
-        setTimeout(() => {
-          notification.remove();
-        }, 300);
-      }, 2000);
-    };
+  // Afficher des distractions plus fréquemment sur mobile
+  this.distractionInterval = setInterval(() => {
+    if (this.activeFilter === 'cognitif') {
+      distract();
+    } else {
+      clearInterval(this.distractionInterval);
+    }
+  }, Math.random() * 3000 + 3000); // Entre 3 et 6 secondes sur mobile
 
-    // Afficher des distractions toutes les 5-10 secondes
-    this.distractionInterval = setInterval(() => {
-      if (this.activeFilter === 'cognitif') {
-        distract();
-      } else {
-        clearInterval(this.distractionInterval);
-      }
-    }, Math.random() * 5000 + 5000);
-
-    // Première distraction immédiate
-    distract();
-  }
+  // Première distraction immédiate
+  distract();
+}
 
   startScreenReader() {
     if (this.utterance) {
@@ -526,6 +710,15 @@ export default class extends Controller {
     const iframe = this.iframeTarget;
     const container = this.overlayContainerTarget;
     const cursor = this.cursorTarget;
+
+      // Supprimer les styles spécifiques au handicap moteur
+      const motorStyle = document.getElementById('motor-impairment-style');
+      if (motorStyle) {
+        motorStyle.remove();
+      }
+
+      // Supprimer toutes les zones tactiles
+      document.querySelectorAll('.touch-area').forEach(area => area.remove());
 
     // Réinitialiser complètement l'iframe
     iframe.style = ""; // Réinitialise tous les styles
