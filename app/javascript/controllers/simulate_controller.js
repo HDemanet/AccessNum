@@ -163,24 +163,30 @@ export default class extends Controller {
     const types = [
       {
         name: 'protanopia',
-        label: 'protanopie (difficulté avec le rouge)'
+        label: 'protanopie (difficulté avec le rouge)',
+        cssFilter: 'grayscale(0) sepia(0) saturate(1.4) hue-rotate(350deg) brightness(0.88) contrast(0.92)'
       },
       {
         name: 'deuteranopia',
-        label: 'deutéranopie (difficulté avec le vert)'
+        label: 'deutéranopie (difficulté avec le vert)',
+        cssFilter: 'grayscale(0) sepia(0) saturate(1.1) hue-rotate(205deg) brightness(0.92) contrast(1)'
       },
       {
         name: 'tritanopia',
-        label: 'tritanopie (difficulté avec le bleu)'
+        label: 'tritanopie (difficulté avec le bleu)',
+        cssFilter: 'grayscale(0) sepia(0.2) saturate(0.8) hue-rotate(175deg) brightness(1.1) contrast(1.1)'
       }
     ];
 
     this.currentDaltonismIndexValue = (this.currentDaltonismIndexValue + 1) % types.length;
     const currentType = types[this.currentDaltonismIndexValue];
 
-    // Utiliser les filtres SVG sur desktop et mobile uniformément
-    // Ces filtres sont déjà définis dans votre HTML
-    iframe.style.filter = `url('#${currentType.name}')`;
+    // Approche hybride : utiliser des filtres CSS sur mobile et SVG sur desktop
+    if (this.isTouchDevice) {
+      iframe.style.filter = currentType.cssFilter;
+    } else {
+      iframe.style.filter = `url('#${currentType.name}')`;
+    }
 
     this.updateInfo(
       `Daltonisme - ${currentType.name}`,
@@ -323,6 +329,7 @@ export default class extends Controller {
 
     iframe.parentElement.appendChild(overlay);
 
+    // Message spécifique pour mobile
     if (this.isTouchDevice) {
       const mobileNote = document.createElement('div');
       mobileNote.style.color = 'white';
@@ -330,7 +337,7 @@ export default class extends Controller {
       mobileNote.style.marginTop = '5px';
       mobileNote.style.textAlign = 'center';
       mobileNote.style.padding = '0 10px';
-      mobileNote.innerHTML = '<i class="fas fa-info-circle"></i> Sur mobile : touchez pour activer le son.';
+      mobileNote.innerHTML = '<i class="fas fa-info-circle"></i> Sur mobile : touchez pour activer le son. Touchez une seconde fois si nécessaire.';
       overlay.appendChild(mobileNote);
     }
 
@@ -339,6 +346,7 @@ export default class extends Controller {
 
     tinnitusButton.addEventListener('click', () => {
       if (isPlaying) {
+        // Arrêter l'audio
         if (audioElement) {
           audioElement.pause();
           audioElement.currentTime = 0;
@@ -360,82 +368,102 @@ export default class extends Controller {
         tinnitusButton.classList.add('btn-warning');
         isPlaying = false;
       } else {
+        // Démarrer l'audio
         if (!audioElement) {
           audioElement = document.createElement('audio');
           audioElement.id = 'tinnitus-audio';
+          audioElement.loop = true;
 
-          const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-          const oscillator = audioCtx.createOscillator();
-          const gainNode = audioCtx.createGain();
+          if (this.isTouchDevice) {
+            // Utiliser une approche plus directe pour mobile en utilisant un son préenregistré encodé en base64
+            const tinnitusToneBase64 = "data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4LjIwLjEwMAAAAAAAAAAAAAAA//tAwAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAAFygCenp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6e//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjM1AAAAAAAAAAAAAAAAJAYyAAAAAAAABcrocG/OAAAAAAD/+xDEAAPMAAGkAAAAIAAANIAAAARMQU1FMy4xMDAEkgABzAAABEgQlEJQCBAEAh/9zbCYDAMBgMBgQDHEHDvkHf/IOHBBEB+f//oIOHfBA7/5cEDu5h3/+XwQH8E8oQqmIAwwTcM/+RP5L5cMrMUJkYAJIZbZZEiSYsYQphMEoDkOiIRjAlBTfFg59qJ0xSxYzYv4zqDxTSkdJRYjYjSxxUEg47JHqWOidM0aeWGpYyZ1jpnw6Sq2a1q5YaFa57UaZWWrFU8mCl8MLFQZgpNDCrIsZFjVLFUsdQyxkTqHROqdQ0K1TKy1MrPSxqGhTEFNRTMuOTguMqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq";
+            audioElement.src = tinnitusToneBase64;
+          } else {
+            // Pour desktop, utiliser la méthode d'oscillateur qui fonctionne bien
+            try {
+              const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+              const oscillator = audioCtx.createOscillator();
+              const gainNode = audioCtx.createGain();
 
-          oscillator.type = 'sine';
-          oscillator.frequency.value = 4000;
-          gainNode.gain.value = 0.3;
+              oscillator.type = 'sine';
+              oscillator.frequency.value = 4000;
+              gainNode.gain.value = 0.3;
 
-          oscillator.connect(gainNode);
-          gainNode.connect(audioCtx.destination);
+              oscillator.connect(gainNode);
+              gainNode.connect(audioCtx.destination);
 
-          oscillator.start();
+              oscillator.start();
+              this.oscillator = oscillator; // Garder une référence pour l'arrêt
 
-          const destination = audioCtx.createMediaStreamDestination();
-          gainNode.connect(destination);
+              const destination = audioCtx.createMediaStreamDestination();
+              gainNode.connect(destination);
 
-          const mediaRecorder = new MediaRecorder(destination.stream);
-          const chunks = [];
+              const mediaRecorder = new MediaRecorder(destination.stream);
+              const chunks = [];
 
-          mediaRecorder.ondataavailable = (evt) => {
-            chunks.push(evt.data);
-          };
+              mediaRecorder.ondataavailable = (evt) => {
+                chunks.push(evt.data);
+              };
 
-          mediaRecorder.onstop = () => {
-            const blob = new Blob(chunks, { 'type' : 'audio/ogg; codecs=opus' });
-            audioElement.src = URL.createObjectURL(blob);
-            audioElement.loop = true;
-            document.body.appendChild(audioElement);
+              mediaRecorder.onstop = () => {
+                const blob = new Blob(chunks, { 'type' : 'audio/ogg; codecs=opus' });
+                audioElement.src = URL.createObjectURL(blob);
+                document.body.appendChild(audioElement);
 
-            audioElement.play()
-              .then(() => {
-                console.log("Lecture audio démarrée avec succès");
-                tinnitusButton.innerHTML = '<i class="fas fa-pause" aria-hidden="true"></i> <span>Arrêter l\'acouphène</span>';
-                tinnitusButton.classList.add('btn-info');
-                tinnitusButton.classList.remove('btn-warning');
-                isPlaying = true;
-              })
-              .catch(e => {
-                console.error("Erreur de lecture audio:", e);
-                tinnitusButton.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Touchez à nouveau';
-                setTimeout(() => {
-                  tinnitusButton.innerHTML = '<i class="fas fa-play" aria-hidden="true"></i> <span>Démarrer l\'acouphène</span>';
-                }, 2000);
-              });
-          };
+                audioElement.play()
+                  .then(() => {
+                    console.log("Lecture audio démarrée avec succès");
+                    tinnitusButton.innerHTML = '<i class="fas fa-pause" aria-hidden="true"></i> <span>Arrêter l\'acouphène</span>';
+                    tinnitusButton.classList.add('btn-info');
+                    tinnitusButton.classList.remove('btn-warning');
+                    isPlaying = true;
+                    oscillator.stop(); // Arrêter l'oscillateur une fois que nous avons l'audio enregistré
+                  })
+                  .catch(e => {
+                    console.error("Erreur de lecture audio:", e);
+                    tinnitusButton.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Touchez à nouveau';
+                    setTimeout(() => {
+                      tinnitusButton.innerHTML = '<i class="fas fa-play" aria-hidden="true"></i> <span>Démarrer l\'acouphène</span>';
+                    }, 2000);
+                  });
+              };
 
-          mediaRecorder.start();
-          setTimeout(() => {
-            oscillator.stop();
-            mediaRecorder.stop();
-          }, 2000);
+              mediaRecorder.start();
+              setTimeout(() => {
+                mediaRecorder.stop();
+              }, 2000);
 
-          return;
-        } else {
+              return; // Sortir de la fonction pour attendre l'enregistrement
+            } catch (error) {
+              console.error("Erreur WebAudio:", error);
+              // Fallback vers la méthode simple en cas d'erreur
+              const tinnitusToneBase64 = "data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4LjIwLjEwMAAAAAAAAAAAAAAA//tAwAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAAFygCenp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6e//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjM1AAAAAAAAAAAAAAAAJAYyAAAAAAAABcrocG/OAAAAAAD/+xDEAAPMAAGkAAAAIAAANIAAAARMQU1FMy4xMDAEkgABzAAABEgQlEJQCBAEAh/9zbCYDAMBgMBgQDHEHDvkHf/IOHBBEB+f//oIOHfBA7/5cEDu5h3/+XwQH8E8oQqmIAwwTcM/+RP5L5cMrMUJkYAJIZbZZEiSYsYQphMEoDkOiIRjAlBTfFg59qJ0xSxYzYv4zqDxTSkdJRYjYjSxxUEg47JHqWOidM0aeWGpYyZ1jpnw6Sq2a1q5YaFa57UaZWWrFU8mCl8MLFQZgpNDCrIsZFjVLFUsdQyxkTqHROqdQ0K1TKy1MrPSxqGhTEFNRTMuOTguMqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq";
+              audioElement.src = tinnitusToneBase64;
+            }
+          }
+
+          document.body.appendChild(audioElement);
+        }
+
+        // Lire l'audio (ceci s'exécute pour mobile et si desktop a déjà créé l'audioElement)
+        if (audioElement.src) {
           audioElement.play()
             .then(() => {
               console.log("Lecture audio démarrée avec succès");
+              tinnitusButton.innerHTML = '<i class="fas fa-pause" aria-hidden="true"></i> <span>Arrêter l\'acouphène</span>';
+              tinnitusButton.classList.add('btn-info');
+              tinnitusButton.classList.remove('btn-warning');
+              isPlaying = true;
             })
             .catch(e => {
               console.error("Erreur de lecture audio:", e);
+              // Sur mobile, insister sur la nécessité d'une interaction utilisateur
               tinnitusButton.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Touchez à nouveau';
               setTimeout(() => {
                 tinnitusButton.innerHTML = '<i class="fas fa-play" aria-hidden="true"></i> <span>Démarrer l\'acouphène</span>';
               }, 2000);
-              return;
             });
         }
-
-        tinnitusButton.innerHTML = '<i class="fas fa-pause" aria-hidden="true"></i> <span>Arrêter l\'acouphène</span>';
-        tinnitusButton.classList.add('btn-info');
-        tinnitusButton.classList.remove('btn-warning');
-        isPlaying = true;
       }
     });
 
@@ -551,7 +579,9 @@ export default class extends Controller {
 
     // Comportement spécifique aux appareils tactiles
     if (this.isTouchDevice) {
-      // Code mobile inchangé...
+      // On ne montre pas le curseur sur mobile
+      this.cursorTarget.classList.add('d-none');
+
       const overlay = document.createElement('div');
       overlay.className = 'simulation-overlay motor-overlay';
       overlay.setAttribute('aria-hidden', 'true');
@@ -575,12 +605,15 @@ export default class extends Controller {
       mobileInstruction.style.zIndex = '10001';
       mobileInstruction.style.textAlign = 'center';
       mobileInstruction.style.maxWidth = '90%';
-      mobileInstruction.textContent = 'Essayez d\'interagir avec l\'écran. Les touches sont difficiles à atteindre et l\'écran tremble.';
+      mobileInstruction.textContent = 'L\'écran tremble, rendant la précision difficile.';
       overlay.appendChild(mobileInstruction);
 
+      // On garde les zones d'interaction "difficiles" qui suivent le doigt
       overlay.addEventListener('touchstart', (e) => {
-        const touch = e.touches[0];
-        this.createTouchArea(touch.clientX, touch.clientY, overlay);
+        if (e.touches.length > 0) {
+          const touch = e.touches[0];
+          this.createTouchArea(touch.clientX, touch.clientY, overlay);
+        }
       });
 
       overlay.addEventListener('touchmove', (e) => {
