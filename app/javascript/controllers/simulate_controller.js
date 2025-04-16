@@ -178,6 +178,8 @@ export default class extends Controller {
     this.currentDaltonismIndexValue = (this.currentDaltonismIndexValue + 1) % types.length;
     const currentType = types[this.currentDaltonismIndexValue];
 
+    iframe.style.filter = `url('#${currentType.name}')`;
+
     if (this.isTouchDevice) {
       // Sur mobile, utiliser une approche plus simple
       // Supprimer tout overlay existant
