@@ -163,28 +163,84 @@ export default class extends Controller {
     const types = [
       {
         name: 'protanopia',
-        label: 'protanopie (difficulté avec le rouge)',
-        cssFilter: 'grayscale(0) sepia(0) saturate(1.4) hue-rotate(350deg) brightness(0.88) contrast(0.92)'
+        label: 'protanopie (difficulté avec le rouge)'
       },
       {
         name: 'deuteranopia',
-        label: 'deutéranopie (difficulté avec le vert)',
-        cssFilter: 'grayscale(0) sepia(0) saturate(1.1) hue-rotate(205deg) brightness(0.92) contrast(1)'
+        label: 'deutéranopie (difficulté avec le vert)'
       },
       {
         name: 'tritanopia',
-        label: 'tritanopie (difficulté avec le bleu)',
-        cssFilter: 'grayscale(0) sepia(0.2) saturate(0.8) hue-rotate(175deg) brightness(1.1) contrast(1.1)'
+        label: 'tritanopie (difficulté avec le bleu)'
       }
     ];
 
     this.currentDaltonismIndexValue = (this.currentDaltonismIndexValue + 1) % types.length;
     const currentType = types[this.currentDaltonismIndexValue];
 
-    // Approche hybride : utiliser des filtres CSS sur mobile et SVG sur desktop
+    // 1. On va d'abord créer un overlay avec une capture d'écran filtrée
     if (this.isTouchDevice) {
-      iframe.style.filter = currentType.cssFilter;
+      // Supprimer tout overlay existant
+      const existingOverlay = document.querySelector('.daltonism-overlay');
+      if (existingOverlay) existingOverlay.remove();
+
+      // Créer un nouvel overlay
+      const overlay = document.createElement('div');
+      overlay.className = 'simulation-overlay daltonism-overlay';
+      overlay.setAttribute('aria-hidden', 'true');
+      overlay.style.position = 'absolute';
+      overlay.style.top = '0';
+      overlay.style.left = '0';
+      overlay.style.width = '100%';
+      overlay.style.height = '100%';
+      overlay.style.zIndex = '9999';
+      overlay.style.backgroundPosition = 'center';
+      overlay.style.backgroundSize = 'cover';
+      overlay.style.backgroundColor = 'transparent';
+      overlay.style.mixBlendMode = 'normal';
+
+      // Ajout d'une bannière explicative
+      const banner = document.createElement('div');
+      banner.style.position = 'absolute';
+      banner.style.bottom = '10px';
+      banner.style.left = '50%';
+      banner.style.transform = 'translateX(-50%)';
+      banner.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+      banner.style.color = 'white';
+      banner.style.padding = '10px';
+      banner.style.borderRadius = '5px';
+      banner.style.zIndex = '10001';
+      banner.style.textAlign = 'center';
+      banner.style.maxWidth = '90%';
+      banner.textContent = `Simulation de ${currentType.label}`;
+      overlay.appendChild(banner);
+
+      // Appliquer le filtre avec une image de fond SVG filtrée
+      // Cette technique utilise une approche plus directe avec une div en overlay
+      // qui applique une teinte colorée spécifique en mode de fusion
+
+      // Définir les propriétés de couleur selon le type de daltonisme
+      switch(currentType.name) {
+        case 'protanopia': // Rouge
+          // Effet rougeâtre/jaunâtre
+          overlay.style.backgroundColor = 'rgba(255, 180, 0, 0.2)';
+          overlay.style.mixBlendMode = 'color';
+          break;
+        case 'deuteranopia': // Vert
+          // Effet verdâtre/brunâtre
+          overlay.style.backgroundColor = 'rgba(165, 160, 0, 0.25)';
+          overlay.style.mixBlendMode = 'color';
+          break;
+        case 'tritanopia': // Bleu
+          // Effet bleuâtre/violacé
+          overlay.style.backgroundColor = 'rgba(100, 120, 255, 0.2)';
+          overlay.style.mixBlendMode = 'color';
+          break;
+      }
+
+      iframe.parentElement.appendChild(overlay);
     } else {
+      // Sur desktop, utiliser les filtres SVG originaux qui fonctionnent bien
       iframe.style.filter = `url('#${currentType.name}')`;
     }
 
@@ -315,6 +371,7 @@ export default class extends Controller {
     overlay.style.height = "12%";
     overlay.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
     overlay.style.display = "flex";
+    overlay.style.flexDirection = "column";
     overlay.style.justifyContent = "center";
     overlay.style.alignItems = "center";
     overlay.style.zIndex = "9999";
@@ -327,141 +384,99 @@ export default class extends Controller {
     tinnitusButton.innerHTML = '<i class="fas fa-play" aria-hidden="true"></i> <span>Démarrer l\'acouphène</span>';
     overlay.appendChild(tinnitusButton);
 
-    iframe.parentElement.appendChild(overlay);
+    // Message spécifique pour tous les appareils, mais particulièrement utile sur mobile
+    const infoNote = document.createElement('div');
+    infoNote.style.color = 'white';
+    infoNote.style.fontSize = '12px';
+    infoNote.style.marginTop = '8px';
+    infoNote.style.textAlign = 'center';
+    infoNote.style.padding = '0 10px';
 
-    // Message spécifique pour mobile
     if (this.isTouchDevice) {
-      const mobileNote = document.createElement('div');
-      mobileNote.style.color = 'white';
-      mobileNote.style.fontSize = '12px';
-      mobileNote.style.marginTop = '5px';
-      mobileNote.style.textAlign = 'center';
-      mobileNote.style.padding = '0 10px';
-      mobileNote.innerHTML = '<i class="fas fa-info-circle"></i> Sur mobile : touchez pour activer le son. Touchez une seconde fois si nécessaire.';
-      overlay.appendChild(mobileNote);
+      infoNote.innerHTML = '<i class="fas fa-volume-up"></i> Touchez le bouton <strong>deux fois</strong> pour activer le son sur mobile';
+    } else {
+      infoNote.innerHTML = '<i class="fas fa-volume-up"></i> Si le son ne démarre pas, cliquez une seconde fois';
     }
+
+    overlay.appendChild(infoNote);
+    iframe.parentElement.appendChild(overlay);
 
     let isPlaying = false;
     let audioElement = null;
 
+    // Préparer l'élément audio dès le début
+    audioElement = document.createElement('audio');
+    audioElement.id = 'tinnitus-audio';
+    audioElement.loop = true;
+
+    // URL de l'acouphène - utiliser une URL statique plutôt qu'un base64
+    // C'est une version courte qui sera plus facile à charger sur mobile
+    const tinnitusUrl = 'https://assets.mixkit.co/active_storage/sfx/1682/1682-preview.mp3';
+    audioElement.src = tinnitusUrl;
+
+    // Ajouter l'audio à la page, mais ne pas le jouer encore
+    document.body.appendChild(audioElement);
+
+    // Augmenter le volume pour s'assurer qu'il est audible
+    audioElement.volume = 0.7;
+
     tinnitusButton.addEventListener('click', () => {
       if (isPlaying) {
         // Arrêter l'audio
-        if (audioElement) {
-          audioElement.pause();
-          audioElement.currentTime = 0;
-        } else if (this.oscillator) {
-          try {
-            this.oscillator.stop();
-            this.oscillator = null;
-            if (this.gainNode) {
-              this.gainNode.disconnect();
-              this.gainNode = null;
-            }
-          } catch(e) {
-            console.log("Erreur lors de l'arrêt de l'oscillateur:", e);
-          }
-        }
+        audioElement.pause();
+        audioElement.currentTime = 0;
 
         tinnitusButton.innerHTML = '<i class="fas fa-play" aria-hidden="true"></i> <span>Démarrer l\'acouphène</span>';
         tinnitusButton.classList.remove('btn-info');
         tinnitusButton.classList.add('btn-warning');
         isPlaying = false;
-      } else {
-        // Démarrer l'audio
-        if (!audioElement) {
-          audioElement = document.createElement('audio');
-          audioElement.id = 'tinnitus-audio';
-          audioElement.loop = true;
 
-          if (this.isTouchDevice) {
-            // Utiliser une approche plus directe pour mobile en utilisant un son préenregistré encodé en base64
-            const tinnitusToneBase64 = "data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4LjIwLjEwMAAAAAAAAAAAAAAA//tAwAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAAFygCenp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6e//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjM1AAAAAAAAAAAAAAAAJAYyAAAAAAAABcrocG/OAAAAAAD/+xDEAAPMAAGkAAAAIAAANIAAAARMQU1FMy4xMDAEkgABzAAABEgQlEJQCBAEAh/9zbCYDAMBgMBgQDHEHDvkHf/IOHBBEB+f//oIOHfBA7/5cEDu5h3/+XwQH8E8oQqmIAwwTcM/+RP5L5cMrMUJkYAJIZbZZEiSYsYQphMEoDkOiIRjAlBTfFg59qJ0xSxYzYv4zqDxTSkdJRYjYjSxxUEg47JHqWOidM0aeWGpYyZ1jpnw6Sq2a1q5YaFa57UaZWWrFU8mCl8MLFQZgpNDCrIsZFjVLFUsdQyxkTqHROqdQ0K1TKy1MrPSxqGhTEFNRTMuOTguMqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq";
-            audioElement.src = tinnitusToneBase64;
-          } else {
-            // Pour desktop, utiliser la méthode d'oscillateur qui fonctionne bien
-            try {
-              const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-              const oscillator = audioCtx.createOscillator();
-              const gainNode = audioCtx.createGain();
-
-              oscillator.type = 'sine';
-              oscillator.frequency.value = 4000;
-              gainNode.gain.value = 0.3;
-
-              oscillator.connect(gainNode);
-              gainNode.connect(audioCtx.destination);
-
-              oscillator.start();
-              this.oscillator = oscillator; // Garder une référence pour l'arrêt
-
-              const destination = audioCtx.createMediaStreamDestination();
-              gainNode.connect(destination);
-
-              const mediaRecorder = new MediaRecorder(destination.stream);
-              const chunks = [];
-
-              mediaRecorder.ondataavailable = (evt) => {
-                chunks.push(evt.data);
-              };
-
-              mediaRecorder.onstop = () => {
-                const blob = new Blob(chunks, { 'type' : 'audio/ogg; codecs=opus' });
-                audioElement.src = URL.createObjectURL(blob);
-                document.body.appendChild(audioElement);
-
-                audioElement.play()
-                  .then(() => {
-                    console.log("Lecture audio démarrée avec succès");
-                    tinnitusButton.innerHTML = '<i class="fas fa-pause" aria-hidden="true"></i> <span>Arrêter l\'acouphène</span>';
-                    tinnitusButton.classList.add('btn-info');
-                    tinnitusButton.classList.remove('btn-warning');
-                    isPlaying = true;
-                    oscillator.stop(); // Arrêter l'oscillateur une fois que nous avons l'audio enregistré
-                  })
-                  .catch(e => {
-                    console.error("Erreur de lecture audio:", e);
-                    tinnitusButton.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Touchez à nouveau';
-                    setTimeout(() => {
-                      tinnitusButton.innerHTML = '<i class="fas fa-play" aria-hidden="true"></i> <span>Démarrer l\'acouphène</span>';
-                    }, 2000);
-                  });
-              };
-
-              mediaRecorder.start();
-              setTimeout(() => {
-                mediaRecorder.stop();
-              }, 2000);
-
-              return; // Sortir de la fonction pour attendre l'enregistrement
-            } catch (error) {
-              console.error("Erreur WebAudio:", error);
-              // Fallback vers la méthode simple en cas d'erreur
-              const tinnitusToneBase64 = "data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4LjIwLjEwMAAAAAAAAAAAAAAA//tAwAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAAFygCenp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6enp6e//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjM1AAAAAAAAAAAAAAAAJAYyAAAAAAAABcrocG/OAAAAAAD/+xDEAAPMAAGkAAAAIAAANIAAAARMQU1FMy4xMDAEkgABzAAABEgQlEJQCBAEAh/9zbCYDAMBgMBgQDHEHDvkHf/IOHBBEB+f//oIOHfBA7/5cEDu5h3/+XwQH8E8oQqmIAwwTcM/+RP5L5cMrMUJkYAJIZbZZEiSYsYQphMEoDkOiIRjAlBTfFg59qJ0xSxYzYv4zqDxTSkdJRYjYjSxxUEg47JHqWOidM0aeWGpYyZ1jpnw6Sq2a1q5YaFa57UaZWWrFU8mCl8MLFQZgpNDCrIsZFjVLFUsdQyxkTqHROqdQ0K1TKy1MrPSxqGhTEFNRTMuOTguMqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq";
-              audioElement.src = tinnitusToneBase64;
-            }
-          }
-
-          document.body.appendChild(audioElement);
+        if (this.isTouchDevice) {
+          infoNote.innerHTML = '<i class="fas fa-volume-up"></i> Touchez le bouton <strong>deux fois</strong> pour activer le son sur mobile';
+        } else {
+          infoNote.innerHTML = '<i class="fas fa-volume-up"></i> Si le son ne démarre pas, cliquez une seconde fois';
         }
+      } else {
+        // Tenter de démarrer l'audio
+        const playPromise = audioElement.play();
 
-        // Lire l'audio (ceci s'exécute pour mobile et si desktop a déjà créé l'audioElement)
-        if (audioElement.src) {
-          audioElement.play()
+        if (playPromise !== undefined) {
+          playPromise
             .then(() => {
+              // L'audio démarre avec succès
               console.log("Lecture audio démarrée avec succès");
               tinnitusButton.innerHTML = '<i class="fas fa-pause" aria-hidden="true"></i> <span>Arrêter l\'acouphène</span>';
               tinnitusButton.classList.add('btn-info');
               tinnitusButton.classList.remove('btn-warning');
               isPlaying = true;
+              infoNote.innerHTML = '<i class="fas fa-volume-up"></i> Acouphène activé';
             })
             .catch(e => {
+              // Erreur de lecture audio - probablement liée aux restrictions d'interaction
               console.error("Erreur de lecture audio:", e);
-              // Sur mobile, insister sur la nécessité d'une interaction utilisateur
-              tinnitusButton.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Touchez à nouveau';
+
+              // Indication visuelle pour encourager l'utilisateur à toucher à nouveau
+              tinnitusButton.innerHTML = '<i class="fas fa-play" aria-hidden="true"></i> <span>Touchez à nouveau</span>';
+              tinnitusButton.classList.add('btn-danger');
+              tinnitusButton.classList.remove('btn-warning');
+
+              // Sur mobile, afficher un message plus visible
+              if (this.isTouchDevice) {
+                infoNote.innerHTML = '<i class="fas fa-exclamation-circle"></i> <strong>Touchez le bouton ci-dessus maintenant!</strong>';
+                infoNote.style.color = '#ff9800';
+              }
+
+              // Revenir à l'état normal après un délai
               setTimeout(() => {
                 tinnitusButton.innerHTML = '<i class="fas fa-play" aria-hidden="true"></i> <span>Démarrer l\'acouphène</span>';
-              }, 2000);
+                tinnitusButton.classList.remove('btn-danger');
+                tinnitusButton.classList.add('btn-warning');
+
+                if (this.isTouchDevice) {
+                  infoNote.innerHTML = '<i class="fas fa-volume-up"></i> Touchez le bouton <strong>deux fois</strong> pour activer le son sur mobile';
+                  infoNote.style.color = 'white';
+                }
+              }, 3000);
             });
         }
       }
