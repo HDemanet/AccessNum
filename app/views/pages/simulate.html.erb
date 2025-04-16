@@ -113,7 +113,7 @@
   <% end %>
 
   <!-- Guide d'utilisation en bas de page -->
-    <div class="usage-guide mt-5 mb-4" data-controller="accordion">
+  <div class="usage-guide mt-5 mb-4" data-controller="accordion">
     <button class="guide-toggle-btn" id="guide-toggle" data-action="click->accordion#toggle" data-accordion-target="button" aria-expanded="false" aria-controls="usage-guide-content">
       <h2 class="guide-title mb-0">
         Comment utiliser ce simulateur ?
@@ -198,7 +198,6 @@
 
 <style>
   .usage-guide {
-    max-width: 900px;
     margin: 3rem auto 2rem;
     color: #333;
   }
@@ -298,6 +297,10 @@
     margin-bottom: 1.2rem;
     color: #444;
     font-size: 1.4rem;
+  }
+
+  .toggle-icon {
+    transition: transform 0.3s ease;
   }
 
   @media (max-width: 767px) {
