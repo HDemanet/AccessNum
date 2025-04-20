@@ -181,12 +181,9 @@ export default class extends Controller {
     iframe.style.filter = `url('#${currentType.name}')`;
 
     if (this.isTouchDevice) {
-      // Sur mobile, utiliser une approche plus simple
-      // Supprimer tout overlay existant
       const existingOverlay = document.querySelector('.daltonism-overlay');
       if (existingOverlay) existingOverlay.remove();
 
-      // Approche directe avec CSS Filters plus simples pour mobile
       let mobileFilter = '';
       switch(currentType.name) {
         case 'protanopia':
@@ -202,9 +199,7 @@ export default class extends Controller {
 
       iframe.style.filter = mobileFilter;
 
-      // Nous supprimons le cadre "Simulation de..." qui n'était pas très visible
     } else {
-      // Sur desktop, revenir à la solution d'origine avec les filtres SVG
       iframe.style.filter = `url('#${currentType.name}')`;
     }
 
