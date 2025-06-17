@@ -57,8 +57,8 @@ $tablet-breakpoint: 992px;
     border-radius: 5px !important;
     transition: all $transition-duration ease-in-out;
     background-color: white;
-    border: 2px solid $orange;
-    color: $orange;
+    border: 2px solid $blue;
+    color: $blue;
 
     @media (max-width: $mobile-breakpoint) {
       padding: 10px;
@@ -71,16 +71,20 @@ $tablet-breakpoint: 992px;
     }
 
     &[aria-selected="true"] {
-      background-color: $orange;
-      color: white;
+      background-color: $light-blue;
+      color: $blue;
+      outline: 2px solid $orange;
+      outline-offset: 1px;
+      border: none;
       transform: scale(1.05);
     }
 
     &:hover, &:focus {
-      background-color: $orange;
-      color: white;
-      outline: 3px solid $blue;
-      outline-offset: 2px;
+      background-color: $light-blue;
+      color: $blue;
+      outline: 2px solid $orange;
+      outline-offset: 1px;
+      border: none;
       transform: scale(1.05);
     }
   }
@@ -150,30 +154,31 @@ $tablet-breakpoint: 992px;
   display: block;
   margin-bottom: 0.75rem;
   font-weight: 600;
-  color: $orange;
+  color: $blue;
 }
 
 .form-control {
   padding: 0.8rem;
-  border: 2px solid $orange;
-  border-radius: 6px;
-  color: #333;
-  font-size: 1rem;
+  border: 1.5px solid $blue;
+  border-radius: 5px;
   flex: 1; // Pour que le champ s'étende
 
-  &:focus {
-    outline: 3px solid $blue;
-    outline-offset: 0;
+  &:hover, &:focus {
+    outline: 2px solid $orange !important;
+    border-radius: 5px;
+    outline-offset: 2px;
+    border-color: white !important;
+    box-shadow: none;
   }
 }
 
 .custom-btn {
-  background-color: $orange;
+  background-color: $blue;
   color: white;
   font-weight: bold;
   padding: 0.8rem 1.5rem;
-  border-radius: 6px !important;
-  transition: all 0.3s ease;
+  border-radius: 5px !important;
+  transition: background-color 0.3s ease-in-out, transform 0.2s;
   border: none;
   align-self: stretch; // Pour s'aligner verticalement avec le champ de texte
 
@@ -183,9 +188,10 @@ $tablet-breakpoint: 992px;
   }
 
   &:hover, &:focus {
-    background-color: darken($orange, 10%);
-    transform: scale(1.03);
-    outline: 3px solid $blue;
+    background-color: $light-blue;
+    color: $blue;
+    transform: scale(1.05);
+    outline: 2px solid $orange;
     outline-offset: 2px;
   }
 }

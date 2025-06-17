@@ -100,28 +100,26 @@
 
     <!-- Texte explicatif pour l'URL complète -->
     <div class="url-help mt-3">
-      <small id="urlHelp" class="form-text text-x" aria-live="polite">
+      <small id="urlHelp" class="form-text" aria-live="polite">
         <i class="fas fa-info-circle" aria-hidden="true"></i> Note :
         AccessNum n'est pas un moteur de recherche.
         Veuillez entrer l'adresse URL complète du site, par exemple:
         <code>https://www.rtbf.be/</code> et non seulement <code>rtbf.be</code>.
       </small>
-      <p class="form-text text-x">
+      <p class="form-text">
         La visualisation de certains sites pourrait ne pas être possible. Dans ce cas, nous vous invitons à essayer par exemple le site de votre bibliothèque locale, d'une association...
       </p>
     </div>
   <% end %>
 
   <!-- Guide d'utilisation en bas de page -->
-  <div class="usage-guide mt-5 mb-4" data-controller="accordion">
-    <button class="guide-toggle-btn" id="guide-toggle" data-action="click->accordion#toggle" data-accordion-target="button" aria-expanded="false" aria-controls="usage-guide-content">
-      <h2 class="guide-title mb-0">
-        Comment utiliser ce simulateur ?
-        <i class="fas fa-chevron-down toggle-icon" aria-hidden="true"></i>
-      </h2>
-    </button>
+  <details class="usage-guide mt-5 mb-4">
+    <summary class="guide-title" role="button" aria-expanded="false">
+      <span class="summary-text">Comment utiliser ce simulateur ?</span>
+      <i class="fas fa-chevron-down toggle-icon" aria-hidden="true"></i>
+    </summary>
 
-    <div id="usage-guide-content" class="guide-content collapsed" data-accordion-target="content">
+    <div class="guide-content">
       <div class="guide-intro mb-3 mt-3">
         <p>Ce simulateur vous permet d'expérimenter les défis rencontrés par différents utilisateurs lors de la navigation web, afin de mieux comprendre l'importance de l'accessibilité numérique.</p>
       </div>
@@ -193,8 +191,24 @@
         <p style="margin-bottom: 0;"><i class="fas fa-info-circle me-2"></i><strong>Important :</strong> Ces simulations sont des approximations pédagogiques et ne représentent pas parfaitement l'expérience de chaque personne. Elles permettent de sensibiliser aux enjeux de l'accessibilité numérique.</p>
       </div>
     </div>
-  </div>
+  </details>
 </div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll("details.usage-guide").forEach(function (details) {
+      const summary = details.querySelector("summary");
+
+      summary.setAttribute("role", "button");
+      summary.setAttribute("aria-expanded", details.open ? "true" : "false");
+
+      summary.addEventListener("click", function () {
+        const isOpen = details.hasAttribute("open");
+        summary.setAttribute("aria-expanded", isOpen ? "true" : "false");
+      });
+    });
+  });
+</script>
 
 <style>
   .usage-guide {
@@ -202,32 +216,25 @@
     color: #333;
   }
 
-  .guide-toggle-btn {
-    width: 100%;
-    text-align: left;
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .guide-toggle-btn:hover .guide-title {
-    color: #ffaa2e;
-  }
-
   .guide-title {
-    width: 100%;
-    margin-bottom: 1rem;
     font-size: 1.6rem;
     padding-bottom: 0.5rem;
     border-bottom: 1px solid #eee;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    cursor: pointer;
     transition: color 0.3s ease;
+    outline: none;
+  }
+
+  .guide-title:hover,
+  .guide-title:focus-visible {
+    color: #97375d;
+    font-weight: 500;
+    outline: 2px solid #97375d;
+    border-radius: 5px;
+    outline-offset: 5px;
   }
 
   .toggle-icon {
@@ -235,25 +242,24 @@
     transition: transform 0.3s ease;
   }
 
-  .guide-toggle-btn[aria-expanded="true"] .toggle-icon {
+  details[open] .toggle-icon {
     transform: rotate(180deg);
   }
 
+  details[open] .summary-text::after {
+    content: " (ouvert)";
+    font-weight: normal;
+    font-size: 0.9rem;
+    color: #555;
+    margin-left: 0.3rem;
+  }
+
   .guide-content {
-    overflow: hidden;
-    transition: max-height 0.5s ease;
-    max-height: 2000px;
+    margin-top: 1rem;
   }
 
-  .guide-content.collapsed {
-    max-height: 0;
-  }
-
-  .guide-intro {
-    margin: 0 auto;
-  }
-
-  .usage-section, .simulation-detail {
+  .usage-section,
+  .simulation-detail {
     background-color: #f8f9fa;
     border-radius: 8px;
     padding: 1.2rem;
@@ -261,7 +267,8 @@
     border-left: 4px solid #ffaa2e;
   }
 
-  .usage-section h3, .simulation-detail h4 {
+  .usage-section h3,
+  .simulation-detail h4 {
     font-size: 1.2rem;
     text-align: center;
     margin-bottom: 1rem;
@@ -269,12 +276,14 @@
     border-bottom: 1px solid #ddd;
   }
 
-  .usage-section ol, .simulation-detail ul {
+  .usage-section ol,
+  .simulation-detail ul {
     padding-left: 1.5rem;
     margin-bottom: 1rem;
   }
 
-  .usage-section li, .simulation-detail li {
+  .usage-section li,
+  .simulation-detail li {
     margin-bottom: 0.5rem;
   }
 
@@ -299,12 +308,9 @@
     font-size: 1.4rem;
   }
 
-  .toggle-icon {
-    transition: transform 0.3s ease;
-  }
-
   @media (max-width: 767px) {
-    .usage-section, .simulation-detail {
+    .usage-section,
+    .simulation-detail {
       margin-bottom: 1rem;
     }
   }

@@ -5,6 +5,3 @@ eagerLoadControllersFrom("controllers", application)
 
 import SimulateController from "controllers/simulate_controller"
 application.register("simulate", SimulateController)
-
-import AccordionController from "controllers/accordion_controller"
-application.register("accordion", AccordionController)
