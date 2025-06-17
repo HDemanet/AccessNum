@@ -38,12 +38,56 @@
   </head>
 
   <body>
+    <div class="skip-container ms-5">
+      <a href="#main-content" class="skip-link">Aller au contenu</a>
+    </div>
     <%= render "shared/navbar" %>
 
-    <main class="container my-5">
+    <main class="container my-5" id="main-content" tabindex="-1">
       <%= yield %>
     </main>
 
     <%= render "shared/footer" %>
   </body>
+
 </html>
+
+<style>
+  .skip-container {
+    width: auto;
+    display: block;
+  }
+
+  a.skip-link {
+    position: absolute;
+    left: -999px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    z-index: 9999;
+  }
+
+  a.skip-link:focus {
+    position: static;
+    left: auto;
+    top: auto;
+    width: auto;
+    height: auto;
+    margin-top: 1rem;
+    margin-left: 1rem;
+    padding: 12px;
+    background-color: #031640;
+    color: white !important;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: 600;
+    outline: 3px solid orange;
+    outline-offset: 2px;
+    text-decoration: none !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease-in-out;
+
+    display: inline-block;
+  }
+</style>
